@@ -5,7 +5,7 @@ description: "Hard.."
 image: "./codegate_banner.png"
 tags: [CTF_Writeup]
 category: CTF
-draft: true
+draft: false
 ---
 
 ## Solve

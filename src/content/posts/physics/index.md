@@ -4,7 +4,7 @@ published: 2025-06-03
 description: " "
 tags: [Study,Psysics]
 category: Study
-draft: true
+draft: false
 ---
 
 물리 실력이 부족하다는걸 느꼈다.  

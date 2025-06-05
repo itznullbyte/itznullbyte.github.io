@@ -5,7 +5,7 @@ description: "Overall 28th, General 17th"
 image: "./ssuctf.jpeg"
 tags: [CTF_Writeup]
 category: CTF
-draft: true
+draft: false
 ---
 ## Comment
 어려웠다.. 웹에서 처음보는 기법들이 많이 나와서 손도 못댔다  
