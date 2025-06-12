@@ -1,3 +1,10 @@
+.flex-badges {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
 .custom-md {
     h1 {
         @apply text-3xl;

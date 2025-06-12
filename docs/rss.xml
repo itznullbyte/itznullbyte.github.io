@@ -111,6 +111,7 @@ $E_{\text{중력p}} = -mgd$&lt;/p&gt;
 &lt;p&gt;$15mgd = \frac{1}{2}mgd - mgd + E_k$&lt;/p&gt;
 &lt;p&gt;따라서 $E_k = \frac{31}{2}mgd$&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;답: 2&lt;/code&gt;&lt;/p&gt;
+&lt;hr /&gt;
 &lt;h3&gt;2024 학년도 수능 20번&lt;/h3&gt;
 &lt;p&gt;&lt;img src=&quot;./2024_scat_20.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 &lt;p&gt;세 과정이 필요하다&lt;/p&gt;
@@ -163,7 +164,61 @@ $\frac{1}{2}mv^2 = 16mgh \cdot \frac{9}{17}$&lt;/p&gt;
 &lt;/ol&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;code&gt;답: 3&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;답: 2&lt;/code&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h3&gt;??? 학년도 ?? 20번&lt;/h3&gt;
+&lt;p&gt;&lt;em&gt;&lt;strong&gt;문제는 나중에 첨부하겠다&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;A 초기 속력: 4v, 나중 속력: v,&lt;br /&gt;
+B 초기 속력: $v_B$, 나중 속력: $v_B&apos;$
+이라고 정의한다.&lt;/p&gt;
+&lt;h4&gt;1. A, B가 올라갈 때 까지&lt;/h4&gt;
+&lt;blockquote&gt;
+&lt;p&gt;A가 올라갈 때:&lt;/p&gt;
+&lt;p&gt;$\frac{1}{2} \cdot k \cdot d^2 = 2m \cdot g \cdot h + \frac{1}{2} \cdot 2m \cdot (4v) ^ 2$
+-&amp;gt; $kd^2 = 4mgh + 32mv^2$&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;B가 올라갈 때
+$\frac{1}{2} \cdot 2k \cdot d^2 - mgh (\text{마찰}) = mg \cdot 3h + \frac{1}{2}mv_B^2$
+-&amp;gt; $kd^2 = 4mgh + \frac{1}{2}mv_B^2$&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;두 식에 의하여 $32mv^2 = \frac{1}{2}mv_B^2$&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$v_B = 8v$&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;2. 충격량 적용&lt;/h4&gt;
+&lt;p&gt;$2m \cdot 4v + -(8v) \cdot m = -(2m) \cdot v + m \cdot v_B&apos;$&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$v_B&apos; = 2v$&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;3. A, B가 돌아갈 때&lt;/h4&gt;
+&lt;p&gt;$A, B$의 나중 속력을 알기에 식 두 개를 도출해 낼 수 있다.&lt;/p&gt;
+&lt;h4&gt;3-1. A가 돌아갈 때 $\frac{d}{2}$ 압축&lt;/h4&gt;
+&lt;p&gt;$2m \cdot g \cdot h + \frac{1}{2} \cdot 2m \cdot v^2 = \frac{1}{2} \cdot k \cdot (\frac{d}{2})^2$&lt;br /&gt;
+정리: $\frac{kd^2}{8} = 2mgh + mv^2$&lt;/p&gt;
+&lt;h4&gt;3-2. B가 돌아갈 때 $x$ 압축&lt;/h4&gt;
+&lt;p&gt;$m \cdot g \cdot 3h + \frac{1}{2} \cdot m \cdot (2v)^2 = \frac{1}{2} \cdot 2k \cdot x^2 + mgh (\text{마찰})$&lt;br /&gt;
+정리: $kx^2 = 2mgh + 2mv^2$&lt;/p&gt;
+&lt;h4&gt;4. 마무리&lt;/h4&gt;
+&lt;p&gt;우리가 구해야하는건 $\frac{x}{d}$이지만, 두 식으로는 이 꼴을 만들 수 없어보인다.&lt;/p&gt;
+&lt;p&gt;그러나 &lt;code&gt;1&lt;/code&gt;과정에서 구한 $kd^2 = 4mgh + 32mv^2$식을 이용해 $gh$와 $v$에 대한 관계식을 만들어 연립할 수 있다&lt;/p&gt;
+&lt;p&gt;$[\frac{kd^2}{8} = 2mgh + mv^2] = [kd^2 = 16mgh + 8mv^2]$&lt;/p&gt;
+&lt;p&gt;$$
+\begin{cases}
+kd^2 = 16mgh + 8mv^2 \
+kd^2 = 4mgh + 32mv^2
+\end{cases}
+$$&lt;/p&gt;
+&lt;p&gt;$12mgh = 24mv^2$&lt;br /&gt;
+$gh = 2v^2$&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;$kx^2 = 3mgh$&lt;/li&gt;
+&lt;li&gt;$kd^2 = 16mgh + 8mv^2 = 20mgh$&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;$\frac{x^2}{d^2} = \frac{3}{20}$&lt;br /&gt;
+$\frac{x}{d} = \sqrt{\frac{3}{20}}$&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;답: 5&lt;/code&gt;&lt;/p&gt;
+&lt;hr /&gt;
 </content:encoded></item><item><title>CVE-2023-51219 Kakaotalk One Click Exploit</title><link>https://fuwari.vercel.app/posts/cve-2020-0601/</link><guid isPermaLink="true">https://fuwari.vercel.app/posts/cve-2020-0601/</guid><description> </description><pubDate>Mon, 02 Jun 2025 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;:::note
 https://stulle123.github.io/posts/kakaotalk-account-takeover/&lt;br /&gt;
 stulle123님의 블로그를 기반으로 합니다.

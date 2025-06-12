@@ -2,7 +2,7 @@
 title: Physics I Problem Solving
 published: 2025-06-03
 description: " "
-tags: [Study,Psysics]
+tags: [Study,Physics]
 category: Study
 draft: false
 ---
@@ -132,6 +132,8 @@ $15mgd = \frac{1}{2}mgd - mgd + E_k$
 
 `답: 2`
 
+---
+
 ### 2024 학년도 수능 20번
 ![](./2024_scat_20.png)
 
@@ -181,4 +183,70 @@ $\frac{1}{2}mv^2 = 16mgh \cdot \frac{9}{17}$
 - 2. $(16mgh \cdot \frac{9}{17}m) \cdot \frac{1}{9} - \frac{9}{17}mgh = mgH$
 - 3. $H = \frac{7}{17}h$
 
-`답: 3`
+`답: 2`
+
+---
+
+### ??? 학년도 ?? 20번
+***문제는 나중에 첨부하겠다***
+
+A 초기 속력: 4v, 나중 속력: v,  
+B 초기 속력: $v_B$, 나중 속력: $v_B'$
+이라고 정의한다.
+
+#### 1. A, B가 올라갈 때 까지
+
+> A가 올라갈 때:
+> 
+> $\frac{1}{2} \cdot k \cdot d^2 = 2m \cdot g \cdot h + \frac{1}{2} \cdot 2m \cdot (4v) ^ 2$
+> -> $kd^2 = 4mgh + 32mv^2$
+
+> B가 올라갈 때
+> $\frac{1}{2} \cdot 2k \cdot d^2 - mgh (\text{마찰}) = mg \cdot 3h + \frac{1}{2}mv_B^2$
+> -> $kd^2 = 4mgh + \frac{1}{2}mv_B^2$
+
+두 식에 의하여 $32mv^2 = \frac{1}{2}mv_B^2$
+- $v_B = 8v$
+
+#### 2. 충격량 적용
+
+$2m \cdot 4v + -(8v) \cdot m = -(2m) \cdot v + m \cdot v_B'$  
+- $v_B' = 2v$
+
+#### 3. A, B가 돌아갈 때
+$A, B$의 나중 속력을 알기에 식 두 개를 도출해 낼 수 있다.
+
+#### 3-1. A가 돌아갈 때 $\frac{d}{2}$ 압축
+$2m \cdot g \cdot h + \frac{1}{2} \cdot 2m \cdot v^2 = \frac{1}{2} \cdot k \cdot (\frac{d}{2})^2$  
+정리: $\frac{kd^2}{8} = 2mgh + mv^2$
+
+#### 3-2. B가 돌아갈 때 $x$ 압축
+$m \cdot g \cdot 3h + \frac{1}{2} \cdot m \cdot (2v)^2 = \frac{1}{2} \cdot 2k \cdot x^2 + mgh (\text{마찰})$  
+정리: $kx^2 = 2mgh + 2mv^2$
+
+#### 4. 마무리
+우리가 구해야하는건 $\frac{x}{d}$이지만, 두 식으로는 이 꼴을 만들 수 없어보인다.
+
+그러나 `1`과정에서 구한 $kd^2 = 4mgh + 32mv^2$식을 이용해 $gh$와 $v$에 대한 관계식을 만들어 연립할 수 있다
+
+$[\frac{kd^2}{8} = 2mgh + mv^2] = [kd^2 = 16mgh + 8mv^2]$
+
+$$
+\begin{cases}
+kd^2 = 16mgh + 8mv^2 \\
+kd^2 = 4mgh + 32mv^2
+\end{cases}
+$$
+
+$12mgh = 24mv^2$  
+$gh = 2v^2$
+
+1. $kx^2 = 3mgh$
+2. $kd^2 = 16mgh + 8mv^2 = 20mgh$
+
+$\frac{x^2}{d^2} = \frac{3}{20}$  
+$\frac{x}{d} = \sqrt{\frac{3}{20}}$
+
+`답: 5`
+
+---
