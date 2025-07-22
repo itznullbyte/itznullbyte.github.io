@@ -12,7 +12,8 @@ A High school student interested in web CTFs and bug bounty. I enjoy exploring w
 ## Bug Bounty
 #### Hall of Fame
 > 2023 Kakao Bug Bounty Hall of Fame  
-> 2025 Kakao Bug Bounty Hall of Fame
+> 2025 Kakao Bug Bounty Hall of Fame  
+> 2025 Patchday Dreamhack Hall of Fame
 
 #### Kakao
 - KV-2023-91

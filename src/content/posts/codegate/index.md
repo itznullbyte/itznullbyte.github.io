@@ -297,7 +297,7 @@ threading.Thread(target=read_auth).start()
 `codegate2025{8b2c743e13f766b30c9c1e72e8a6595a651321da1c01eda7776fbd8e209ef9feace5a162237e696ea4b58a7bdf0b88dfb7f25c5ac76f4e12a4c4538d438fcdbf}`
 
 ### Masquerade
-업솔빙 때린 문제인데 인상깊어서 풀진 못했지만 적어본다. 못 푼 내가 할 말은 아니지만 주니어부 0솔까지 갈 문제는 아니었다고 생각한다
+업솔빙 때린 문제인데 인상깊어서 풀진 못했지만 적어본다.
 
 ![](./mar1.png)
 

