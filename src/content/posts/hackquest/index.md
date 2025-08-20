@@ -2,7 +2,7 @@
 title: 2025 HackQuest [Simple Note] Write-Up
 published: 2025-07-22
 description: " "
-tags: [CTF_Writeup]
+tags: [CTF_Writeup, hackquest, kaist]
 category: CTF
 draft: false
 ---

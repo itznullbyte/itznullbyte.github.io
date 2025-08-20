@@ -2,7 +2,7 @@
 
 [Astro](https://astro.build)로 구축된 정적 블로그 템플릿입니다.
 
-[**🖥️미리보기 (Vercel)**](https://fuwari.vercel.app)&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;
+[**🖥️미리보기 (Vercel)**](https://itznullbyte.github.io)&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;
 [**📦Old Hexo Version**](https://github.com/saicaca/hexo-theme-vivia)&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;
 [**🌏 English**](https://github.com/saicaca/fuwari/blob/main/README.md)&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;
 [**🌏 中文**](https://github.com/saicaca/fuwari/blob/main/README.zh-CN.md)&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;

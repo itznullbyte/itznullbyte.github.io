@@ -1,9 +1,9 @@
 ---
-title: AJOU COSS CTF Pre-Qual 2025 Write-Up
+title: AJOU COSS CTF Quals 2025 Write-Up
 published: 2025-06-23
 description: "3th"
 image: "./banner.jpg"
-tags: [CTF_Writeup]
+tags: [CTF_Writeup, cossctf]
 category: CTF
 draft: false
 ---

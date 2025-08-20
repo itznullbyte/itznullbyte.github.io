@@ -1,9 +1,9 @@
 ---
-title: Codegate 2025 Pre-Quals Write-Up
+title: Codegate 2025 Quals Write-Up
 published: 2025-04-03
 description: "Hard.."
 image: "./codegate_banner.png"
-tags: [CTF_Writeup]
+tags: [CTF_Writeup, codegate, writeup]
 category: CTF
 draft: false
 ---
