@@ -1,0 +1,6 @@
+title: "Itz nullbyte"
+description: "Web Hacking"
+url: "https://itznullbyte.github.io"
+theme: fuwari
+plugins:
+  - jekyll-sitemap
