@@ -18,6 +18,7 @@ Usually participates CTFs with [Team Fermion]()
 - 2025 KAIST HackQuest - Finalist, 4th
 - 2025 LG Uplus Security Hackathon - Finalist (Team 대성없는대성팀)
 - 2025 Whitehat Contest - Finalist (Team Zerobyte)
+- 2025 SCA CTF - 4th (Team '혜성'처럼 빛날 'Null' 응원해!)
 
 ---
 
@@ -41,6 +42,7 @@ Usually participates CTFs with [Team Fermion]()
 
 #### PatchDay
 - Patchday #823 (Dreamhack)
+- Patchday #924 (Dreamhack)
 - Patchday #806 (Goorm)
 - Patchday #809 (Goorm)
 
