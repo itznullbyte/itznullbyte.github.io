@@ -7,7 +7,7 @@ import type {
 import { LinkPreset } from "./types/config";
 
 export const siteConfig: SiteConfig = {
-	title: "nullbyte_",
+	title: "nullbyte",
 	subtitle: "My Blog",
 	lang: "en", // 'en', 'zh_CN', 'zh_TW', 'ja', 'ko', 'es', 'th'
 	themeColor: {
@@ -53,7 +53,7 @@ export const navBarConfig: NavBarConfig = {
 
 export const profileConfig: ProfileConfig = {
 	avatar: "assets/images/nullbyte.jpg", // Relative to the /src directory. Relative to the /public directory if it starts with '/'
-	name: "nullbyte_",
+	name: "nullbyte",
 	bio: "South Korea Student",
 	links: [
 		{

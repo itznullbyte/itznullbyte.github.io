@@ -11,12 +11,13 @@ Usually participates CTFs with [Team Fermion]()
 ---
 
 ## CTF
-| Year | Competition | Team | Result |
-|------|------------|------|--------|
-| 2025 | 아주대학교 데이터보안·활용융합 해킹방어대회 (COSS) | 참치김치찌개 | Finalist |
-| 2025 | 순천향대학교 정보보호 페스티벌 (YISF) | 예준임 | Finalist |
-| 2025 | Cyber Conflict Exercise (CCE) | 해킹의 정석 | Finalist |
-| 2025 | KAIST HackQuest | - | 4th |
+
+- 2025 아주대학교 데이터보안·활용융합 해킹방어대회 (COSS) - Finalist (Team 참치김치찌개)
+- 2025 순천향대학교 정보보호 페스티벌 (YISF) - Finalist
+- 2025 Cyber Conflict Exercise (CCE) - Finalist (Team 해킹의 정석)
+- 2025 KAIST HackQuest - Finalist, 4th
+- 2025 LG Uplus Security Hackathon - Finalist (Team 대성없는대성팀)
+- 2025 Whitehat Contest - Finalist (Team Zerobyte)
 
 ---
 

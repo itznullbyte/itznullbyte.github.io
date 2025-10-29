@@ -1,5 +1,5 @@
 ---
-title: 2025 HackQuest [Simple Note] Write-Up
+title: 2025 HackQuest - Simple Note
 published: 2025-07-22
 description: " "
 tags: [CTF_Writeup, hackquest, kaist]

