@@ -2,7 +2,6 @@
 title: CCE Quals Write-Up
 published: 2025-08-19
 description: "6th with Team: 해킹의 정석"
-image: "./cce.png"
 tags: [CTF_Writeup, CCE, CyberConflictExercise ]
 category: CTF
 draft: false

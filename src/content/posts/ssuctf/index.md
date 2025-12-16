@@ -2,7 +2,6 @@
 title: SSU CTF 2025 Write-Up
 published: 2025-01-26
 description: "Overall 28th, General 17th"
-image: "./ssuctf.jpeg"
 tags: [CTF_Writeup, ssuctf]
 category: CTF
 draft: false

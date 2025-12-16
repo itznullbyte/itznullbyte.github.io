@@ -20,11 +20,16 @@ Usually participates CTFs with [Team Fermion]()
 - 2025 Whitehat Contest - Finalist (Team Zerobyte)
 - 2025 SCA CTF - 4th (Team '혜성'처럼 빛날 'Null' 응원해!)
 
+## Author
+- Dreamhack - [Letter Cloud](https://dreamhack.io/wargame/challenges/2083) (web)
+- Dreamhack - [My Best Friend](https://dreamhack.io/wargame/challenges/1859) (web)
+- Dreamhack - [Dream protocol](https://dreamhack.io/wargame/challenges/1759) (misc)
+
 ---
 
 ## Bug Bounty
 #### Hall of Fame
-> 2023 Kakao Bug Bounty Hall of Fame  
+> 2023 Kakao Bug Bounty Hall of Fame + Special Contributor
 > 2025 Kakao Bug Bounty Hall of Fame  
 > 2025 Patchday Dreamhack Hall of Fame
 
