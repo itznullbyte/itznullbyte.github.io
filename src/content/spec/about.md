@@ -29,7 +29,7 @@ Usually participates CTFs with [Team Fermion]()
 
 ## Bug Bounty
 #### Hall of Fame
-> 2023 Kakao Bug Bounty Hall of Fame + Special Contributor
+> 2023 Kakao Bug Bounty Hall of Fame + Special Contributor  
 > 2025 Kakao Bug Bounty Hall of Fame  
 > 2025 Patchday Dreamhack Hall of Fame
 
