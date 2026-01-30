@@ -1,5 +1,5 @@
 ---
-title: EJS 뒷북치기
+title: EJS SSTI Analysis
 published: 2025-12-28
 description: " "
 tags: [Analysis]

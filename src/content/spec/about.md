@@ -1,29 +1,12 @@
 # About
 High school student interested in Web2 CTFs and Bug bounty.  
-Usually participates CTFs with [Team Fermion]()
+Usually participates CTFs with [Team Fermion](https://project-plasma.org/)
 
 ## Contact
 
 - Email: `itznullbyte@gmail.com`
 - Discord: `itznullbyte`
 - Dreamhack: `nullbyte_`
-
----
-
-## CTF
-
-- 2025 아주대학교 데이터보안·활용융합 해킹방어대회 (COSS) - Finalist (Team 참치김치찌개)
-- 2025 순천향대학교 정보보호 페스티벌 (YISF) - Finalist
-- 2025 Cyber Conflict Exercise (CCE) - Finalist (Team 해킹의 정석)
-- 2025 KAIST HackQuest - Finalist, 4th
-- 2025 LG Uplus Security Hackathon - Finalist (Team 대성없는대성팀)
-- 2025 Whitehat Contest - Finalist (Team Zerobyte)
-- 2025 SCA CTF - 4th (Team '혜성'처럼 빛날 'Null' 응원해!)
-
-## Author
-- Dreamhack - [Letter Cloud](https://dreamhack.io/wargame/challenges/2083) (web)
-- Dreamhack - [My Best Friend](https://dreamhack.io/wargame/challenges/1859) (web)
-- Dreamhack - [Dream protocol](https://dreamhack.io/wargame/challenges/1759) (misc)
 
 ---
 
@@ -38,6 +21,7 @@ Usually participates CTFs with [Team Fermion]()
 - KV-2024-156
 - KV-2025-163
 - KV-2025-176
+- KV-2026-234
 
 #### NASA
 - 488dafcb-9ee2-48e7-8938-895833f13cf5 (P5)
@@ -54,8 +38,29 @@ Usually participates CTFs with [Team Fermion]()
 #### CVE
 - CVE-2025-50938
 
+#### KVE
+- KVE-2025-0379
+
 #### Private
 - REDACTED
+
+---
+
+## CTF
+
+- 2025 아주대학교 데이터보안·활용융합 해킹방어대회 (COSS) - Finalist (Team 참치김치찌개)
+- 2025 순천향대학교 정보보호 페스티벌 (YISF) - Finalist
+- 2025 Cyber Conflict Exercise (CCE) - Finalist (Team 해킹의 정석)
+- 2025 KAIST HackQuest - Finalist, 4th
+- 2025 LG Uplus Security Hackathon - Finalist (Team 대성없는대성팀)
+- 2025 Whitehat Contest - Finalist (Team Zerobyte)
+- 2025 SCA CTF - 4th (Team '혜성'처럼 빛날 'Null' 응원해!)
+- 2026 Unifox CTF (UNICON) - 1st
+
+## Author
+- Dreamhack - [Letter Cloud](https://dreamhack.io/wargame/challenges/2083) (web)
+- Dreamhack - [My Best Friend](https://dreamhack.io/wargame/challenges/1859) (web)
+- Dreamhack - [Dream protocol](https://dreamhack.io/wargame/challenges/1759) (misc)
 
 ---
 

