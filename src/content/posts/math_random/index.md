@@ -117,7 +117,7 @@ Random seed가 설정되어 있지 않다면 OS 엔트로피 기반으로 seed�
 
 ## Case Analysis CVE-2025-22150
 
-m0lecon의 securetextbin 문제에서 [CVE-2025-22150](https://nvd.nist.gov/vuln/detail/CVE-2025-22150)를 사용한 문제가 출제되었습니다.
+m0lecon에서 [CVE-2025-22150](https://nvd.nist.gov/vuln/detail/CVE-2025-22150)를 사용한 문제가 출제되었습니다.
 
 HTTP/1.1 클라이언트인 Undici 라이브러리에서 multipart boundary를 생성할 때 Math.random()을 사용했기에, 이를 예측하고 multipart/form-data를 smuggling 할 수 있었습니다.
 이를 통해 공격자는 boundary 값을 예측하거나 요청을 변조할 수 있습니다.
