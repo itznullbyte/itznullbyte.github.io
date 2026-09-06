@@ -1,0 +1,16 @@
+---
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Page not found">
+  <Header />
+  <main class="not-found page-shell">
+    <span>404 / Not found</span>
+    <h1>길을 잃으셨네요.</h1>
+    <p>요청한 페이지가 없거나 주소가 변경되었습니다.</p>
+    <a href="/">블로그로 돌아가기 <b aria-hidden="true">→</b></a>
+  </main>
+  <Footer />
+</BaseLayout>

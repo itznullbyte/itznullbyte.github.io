@@ -1,0 +1,21 @@
+---
+interface Props {
+  active?: "blog" | "about";
+}
+
+const { active } = Astro.props;
+---
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="/" aria-label="nullbyte 블로그 홈">
+      <span class="brand-mark" aria-hidden="true">N</span>
+      <span class="brand-name">일반고에서 보안 공부</span>
+    </a>
+
+    <nav class="site-nav" aria-label="주요 메뉴">
+      <a class:list={[{ active: active === "blog" }]} href="/">Blog</a>
+      <a class:list={[{ active: active === "about" }]} href="/about/">About</a>
+    </nav>
+  </div>
+</header>

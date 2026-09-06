@@ -1,0 +1,209 @@
+---
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import PostRow from "../components/PostRow.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { Image } from "astro:assets";
+import { formatDate, getPublishedPosts, postUrl, readingTime } from "../lib/posts";
+
+const posts = await getPublishedPosts();
+const featured = posts[0];
+const categories = [...new Set(posts.map((post) => post.data.category || "Etc"))];
+---
+
+<BaseLayout>
+  <Header active="blog" />
+  <main>
+    <section class="blog-hero page-shell">
+      <div class="hero-kicker">
+        <span>Personal archive</span>
+        <span>Anyang, KR</span>
+      </div>
+      <div class="hero-grid">
+        <h1>Blog</h1>
+        <a class="hero-notes-link" href="#archive">글 목록 보기 <span aria-hidden="true">↓</span></a>
+      </div>
+    </section>
+
+    {featured && (
+      <section class="featured-section page-shell" aria-labelledby="latest-title">
+        <div class="section-label">
+          <span id="latest-title">Latest note</span>
+          <span>{formatDate(featured.data.published)}</span>
+        </div>
+        <article
+          class="featured-post"
+          data-post-item
+          data-category={featured.data.category || "Etc"}
+          data-search={[featured.data.title, featured.data.description, featured.data.category, ...featured.data.tags].join(" ").toLocaleLowerCase("ko")}
+        >
+          <a href={postUrl(featured)}>
+            <div class:list={["feature-visual", { "has-image": featured.data.image }]} aria-hidden="true">
+              {featured.data.image ? (
+                <Image
+                  class="feature-thumbnail"
+                  src={featured.data.image}
+                  alt=""
+                  widths={[480, 720, 960]}
+                  sizes="(max-width: 720px) calc(100vw - 40px), 46vw"
+                  loading="eager"
+                />
+              ) : (
+                <>
+                  <span>{String(featured.data.published.getFullYear()).slice(-2)}</span>
+                  <span class="feature-slash"></span>
+                  <span>{String(featured.data.published.getMonth() + 1).padStart(2, "0")}</span>
+                </>
+              )}
+            </div>
+            <div class="feature-copy">
+              <span class="eyebrow">{featured.data.category || "Note"} · {readingTime(featured.body)} min read</span>
+              <h2>{featured.data.title}</h2>
+              <p>{featured.data.description.trim() || "새롭게 기록한 글을 읽어보세요."}</p>
+              <span class="read-link">Read note <b aria-hidden="true">↗</b></span>
+            </div>
+          </a>
+        </article>
+      </section>
+    )}
+
+    <section class="archive-section page-shell" id="archive" aria-labelledby="archive-title">
+      <div class="archive-heading">
+        <div>
+          <span class="section-number">02</span>
+          <h2 id="archive-title">All notes</h2>
+        </div>
+      </div>
+
+      <div class="archive-tools">
+        <label class="search-field">
+          <span class="sr-only">글 검색</span>
+          <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m16 16 5 5"></path></svg>
+          <input type="search" placeholder="Search notes" autocomplete="off" data-search-input />
+        </label>
+        <div class="filter-list" aria-label="카테고리 필터">
+          <button type="button" class="active" data-category-filter="all">All</button>
+          {categories.map((category) => (
+            <button type="button" data-category-filter={category}>{category}</button>
+          ))}
+        </div>
+      </div>
+
+      <div class="post-list" data-post-list>
+        <div class="post-list-head" aria-hidden="true">
+          <span>No.</span><span>Article</span><span>Date</span><span></span>
+        </div>
+        {posts.map((post, index) => <PostRow post={post} index={posts.length - index - 1} />)}
+      </div>
+      <p class="empty-state" hidden data-empty-state>일치하는 글이 없습니다.</p>
+      <nav class="pagination" aria-label="글 목록 페이지" data-pagination hidden>
+        <button type="button" data-page-previous><span aria-hidden="true">←</span> <span class="pagination-label">Previous</span></button>
+        <div class="pagination-pages" data-page-numbers></div>
+        <button type="button" data-page-next><span class="pagination-label">Next</span> <span aria-hidden="true">→</span></button>
+      </nav>
+    </section>
+  </main>
+  <Footer />
+
+  <script>
+    const input = document.querySelector<HTMLInputElement>("[data-search-input]");
+    const buttons = [...document.querySelectorAll<HTMLButtonElement>("[data-category-filter]")];
+    const list = document.querySelector<HTMLElement>("[data-post-list]");
+    const items = [...(list?.querySelectorAll<HTMLElement>("[data-post-item]") || [])];
+    const empty = document.querySelector<HTMLElement>("[data-empty-state]");
+    const pagination = document.querySelector<HTMLElement>("[data-pagination]");
+    const pageNumbers = document.querySelector<HTMLElement>("[data-page-numbers]");
+    const previousPage = document.querySelector<HTMLButtonElement>("[data-page-previous]");
+    const nextPage = document.querySelector<HTMLButtonElement>("[data-page-next]");
+    const pageSize = 8;
+    let category = "all";
+    let currentPage = 1;
+
+    const goToArchive = () => {
+      document.querySelector("#archive")?.scrollIntoView({ block: "start" });
+    };
+
+    const renderPageNumbers = (totalPages: number) => {
+      if (!pageNumbers) return;
+      pageNumbers.replaceChildren();
+
+      const pages = totalPages <= 7
+        ? Array.from({ length: totalPages }, (_, index) => index + 1)
+        : [...new Set([1, currentPage - 1, currentPage, currentPage + 1, totalPages])]
+            .filter((page) => page > 0 && page <= totalPages)
+            .sort((a, b) => a - b);
+
+      pages.forEach((page, index) => {
+        if (index > 0 && page - pages[index - 1] > 1) {
+          const ellipsis = document.createElement("span");
+          ellipsis.className = "pagination-ellipsis";
+          ellipsis.textContent = "…";
+          pageNumbers.append(ellipsis);
+        }
+
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = String(page);
+        button.setAttribute("aria-label", `${page}페이지`);
+        if (page === currentPage) {
+          button.className = "active";
+          button.setAttribute("aria-current", "page");
+        }
+        button.addEventListener("click", () => {
+          currentPage = page;
+          filterPosts();
+          goToArchive();
+        });
+        pageNumbers.append(button);
+      });
+    };
+
+    const filterPosts = () => {
+      const query = input?.value.trim().toLocaleLowerCase("ko") || "";
+      const matchingItems = items.filter((item) => {
+        const matchesQuery = item.dataset.search?.includes(query) ?? true;
+        const matchesCategory = category === "all" || item.dataset.category === category;
+        return matchesQuery && matchesCategory;
+      });
+      const totalPages = Math.max(1, Math.ceil(matchingItems.length / pageSize));
+      currentPage = Math.min(currentPage, totalPages);
+      const firstItem = (currentPage - 1) * pageSize;
+      const visibleItems = new Set(matchingItems.slice(firstItem, firstItem + pageSize));
+
+      for (const item of items) item.hidden = !visibleItems.has(item);
+      if (empty) empty.hidden = matchingItems.length !== 0;
+      if (pagination) pagination.hidden = matchingItems.length === 0 || totalPages <= 1;
+      if (previousPage) previousPage.disabled = currentPage === 1;
+      if (nextPage) nextPage.disabled = currentPage === totalPages;
+      renderPageNumbers(totalPages);
+    };
+
+    input?.addEventListener("input", () => {
+      currentPage = 1;
+      filterPosts();
+    });
+    for (const button of buttons) {
+      button.addEventListener("click", () => {
+        category = button.dataset.categoryFilter || "all";
+        currentPage = 1;
+        for (const candidate of buttons) candidate.classList.toggle("active", candidate === button);
+        filterPosts();
+      });
+    }
+
+    previousPage?.addEventListener("click", () => {
+      if (currentPage <= 1) return;
+      currentPage -= 1;
+      filterPosts();
+      goToArchive();
+    });
+
+    nextPage?.addEventListener("click", () => {
+      currentPage += 1;
+      filterPosts();
+      goToArchive();
+    });
+
+    filterPosts();
+  </script>
+</BaseLayout>

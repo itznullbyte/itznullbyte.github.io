@@ -1,0 +1,33 @@
+---
+import type { Post } from "../lib/posts";
+import { formatDate, postUrl } from "../lib/posts";
+
+interface Props {
+  post: Post;
+  index: number;
+}
+
+const { post, index } = Astro.props;
+const searchText = [post.data.title, post.data.description, post.data.category, ...post.data.tags]
+  .join(" ")
+  .toLocaleLowerCase("ko");
+---
+
+<article
+  class="post-row"
+  data-post-item
+  data-category={post.data.category || "Etc"}
+  data-search={searchText}
+>
+  <a href={postUrl(post)} aria-label={`${post.data.title} 읽기`}>
+    <span class="post-index">{String(index + 1).padStart(2, "0")}</span>
+    <span class="post-summary">
+      <span class="post-category">{post.data.category || "Note"}</span>
+      <strong>{post.data.title}</strong>
+      {post.data.description.trim() && <span class="post-description">{post.data.description}</span>}
+      <span class="mobile-date">{formatDate(post.data.published)}</span>
+    </span>
+    <time datetime={post.data.published.toISOString()}>{formatDate(post.data.published)}</time>
+    <span class="post-arrow" aria-hidden="true">↗</span>
+  </a>
+</article>

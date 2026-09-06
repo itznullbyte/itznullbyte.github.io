@@ -1,0 +1,16 @@
+---
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import AboutDocument from "../content/spec/about.md";
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="About" description="Hello World!">
+  <Header active="about" />
+  <main class="about-page page-shell">
+    <article class="about-content prose">
+      <AboutDocument />
+    </article>
+  </main>
+  <Footer />
+</BaseLayout>

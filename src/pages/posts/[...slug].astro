@@ -1,0 +1,139 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { getPublishedPosts, formatDate, postUrl, readingTime } from "../../lib/posts";
+import Footer from "../../components/Footer.astro";
+import Header from "../../components/Header.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+export async function getStaticPaths() {
+  const posts = await getPublishedPosts();
+  return posts.map((post, index) => ({
+    params: { slug: post.slug },
+    props: {
+      post,
+      previous: posts[index + 1],
+      next: posts[index - 1],
+    },
+  }));
+}
+
+interface Props {
+  post: CollectionEntry<"posts">;
+  previous?: CollectionEntry<"posts">;
+  next?: CollectionEntry<"posts">;
+}
+
+const { post, previous, next } = Astro.props;
+const { Content, headings } = await post.render();
+const toc = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
+const description = post.data.description.trim() || `${post.data.title} — nullbyte의 기록`;
+const publishedIso = post.data.published.toISOString();
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: post.data.title,
+  description,
+  datePublished: publishedIso,
+  dateModified: post.data.updated?.toISOString() || publishedIso,
+  author: { "@type": "Person", name: "nullbyte" },
+  keywords: post.data.tags,
+};
+---
+
+<BaseLayout title={post.data.title} description={description} image={post.data.image?.src} type="article">
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
+  <div class="reading-progress" data-reading-progress></div>
+  <Header active="blog" />
+  <main class="article-page">
+    <header class="article-header page-shell">
+      <a class="back-link" href="/#archive"><span aria-hidden="true">←</span> All notes</a>
+      <div class="article-kicker">
+        <span>{post.data.category || "Note"}</span>
+        <span>Article / {post.data.published.getFullYear()}</span>
+      </div>
+      <div class="article-meta">
+        <div><span>Published</span><time datetime={publishedIso}>{formatDate(post.data.published)}</time></div>
+        <div><span>Read time</span><strong>{readingTime(post.body)} min</strong></div>
+        <div><span>Written by</span><strong>nullbyte</strong></div>
+      </div>
+      <h1>{post.data.title}</h1>
+      {post.data.description.trim() && <p class="article-description">{post.data.description}</p>}
+      {post.data.tags.length > 0 && (
+        <div class="article-tags">
+          {post.data.tags.map((tag) => <span>#{tag}</span>)}
+        </div>
+      )}
+    </header>
+
+    <div class="article-rule"></div>
+
+    <div class="article-layout page-shell">
+      <article class="prose article-content" data-article-content>
+        <Content />
+      </article>
+
+      {toc.length > 0 && (
+        <aside class="toc" aria-label="목차">
+          <span>On this page</span>
+          <nav>
+            {toc.map((heading) => (
+              <a class:list={[{ nested: heading.depth === 3 }]} href={`#${heading.slug}`}>{heading.text}</a>
+            ))}
+          </nav>
+        </aside>
+      )}
+    </div>
+
+    <nav class="post-navigation page-shell" aria-label="이전 및 다음 글">
+      {previous ? (
+        <a href={postUrl(previous)}>
+          <span>Previous</span>
+          <strong>{previous.data.title}</strong>
+          <b aria-hidden="true">←</b>
+        </a>
+      ) : <span></span>}
+      {next ? (
+        <a class="next" href={postUrl(next)}>
+          <span>Next</span>
+          <strong>{next.data.title}</strong>
+          <b aria-hidden="true">→</b>
+        </a>
+      ) : <span></span>}
+    </nav>
+  </main>
+  <Footer />
+
+  <script>
+    const progress = document.querySelector<HTMLElement>("[data-reading-progress]");
+    const article = document.querySelector<HTMLElement>("[data-article-content]");
+
+    const updateProgress = () => {
+      if (!progress || !article) return;
+      const start = article.offsetTop;
+      const distance = article.offsetHeight - window.innerHeight;
+      const ratio = distance <= 0 ? 1 : Math.min(1, Math.max(0, (window.scrollY - start) / distance));
+      progress.style.transform = `scaleX(${ratio})`;
+    };
+
+    for (const block of document.querySelectorAll<HTMLElement>(".article-content pre")) {
+      const codeElement = block.querySelector("code");
+      const languageClass = Array.from(codeElement?.classList || []).find((className) => className.startsWith("language-"));
+      block.dataset.language ||= languageClass?.replace("language-", "") || "code";
+
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "copy-code";
+      button.textContent = "Copy";
+      button.addEventListener("click", async () => {
+        const code = codeElement?.textContent || "";
+        await navigator.clipboard.writeText(code);
+        button.textContent = "Copied";
+        window.setTimeout(() => { button.textContent = "Copy"; }, 1400);
+      });
+      block.append(button);
+    }
+
+    document.addEventListener("scroll", updateProgress, { passive: true });
+    updateProgress();
+  </script>
+</BaseLayout>
